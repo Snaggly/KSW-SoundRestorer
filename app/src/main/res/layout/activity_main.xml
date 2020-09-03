@@ -10,7 +10,7 @@
         android:id="@+id/button"
         android:layout_width="588dp"
         android:layout_height="228dp"
-        android:text="Click to test AudioManager setStreamVolume"
+        android:text="Click to test"
         android:textSize="24sp"
         tools:layout_editor_absoluteX="71dp"
         tools:layout_editor_absoluteY="91dp" />
