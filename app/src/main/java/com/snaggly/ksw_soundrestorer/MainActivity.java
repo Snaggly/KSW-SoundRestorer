@@ -30,7 +30,7 @@ public class MainActivity extends AppCompatActivity {
         if (Build.VERSION.SDK_INT >= 23 && !Settings.canDrawOverlays(this)) {
             startActivityForResult(new Intent("android.settings.action.MANAGE_OVERLAY_PERMISSION", Uri.parse("package:" + getPackageName())), ACTION_MANAGE_OVERLAY_PERMISSION_REQUEST_CODE);
         } else{
-            BtPreloader.preload(this, targetPackage);
+            BtPreloader.preload(this, targetPackage, 600);
         }
 
         finish();

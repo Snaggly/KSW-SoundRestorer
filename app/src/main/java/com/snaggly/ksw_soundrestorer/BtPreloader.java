@@ -5,7 +5,7 @@ import android.content.Intent;
 import android.widget.Toast;
 
 public class BtPreloader {
-    public static void preload(Context context, String targetPackage){
+    public static void preload(Context context, String targetPackage, int cacheTime){
         try {
             Intent kswBtIntent = context.getPackageManager().getLaunchIntentForPackage(targetPackage);
 
@@ -17,7 +17,7 @@ public class BtPreloader {
         }
 
         try {
-            Thread.sleep(750);
+            Thread.sleep(cacheTime);
 
             Intent home = new Intent(Intent.ACTION_MAIN);
             home.addCategory(Intent.CATEGORY_HOME);
