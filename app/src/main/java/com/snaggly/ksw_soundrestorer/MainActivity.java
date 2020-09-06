@@ -11,11 +11,16 @@ import android.media.AudioManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.IBinder;
+import android.os.Parcel;
+import android.os.UserHandle;
 import android.provider.Settings;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
+
+import com.wits.pms.IPowerManagerAppService;
 
 import java.util.List;
 
@@ -29,10 +34,15 @@ public class MainActivity extends AppCompatActivity {
 
         if (Build.VERSION.SDK_INT >= 23 && !Settings.canDrawOverlays(this)) {
             startActivityForResult(new Intent("android.settings.action.MANAGE_OVERLAY_PERMISSION", Uri.parse("package:" + getPackageName())), ACTION_MANAGE_OVERLAY_PERMISSION_REQUEST_CODE);
-        } else{
-            BtPreloader.preload(this, targetPackage, 600);
         }
 
+        try{
+           Thread.sleep(500);
+        }
+        catch(Exception e){
+            Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_LONG).show();
+        }
+        //Toast.makeText(getApplicationContext(), "Executed!\n" + getPackageName(), Toast.LENGTH_LONG).show();
         finish();
     }
 }

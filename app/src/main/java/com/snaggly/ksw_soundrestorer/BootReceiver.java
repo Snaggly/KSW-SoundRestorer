@@ -12,7 +12,9 @@ public class BootReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         if (Intent.ACTION_BOOT_COMPLETED.equals(intent.getAction())){
-            BtPreloader.preload(context, MainActivity.targetPackage, 100);
+            Intent mainIntent = context.getPackageManager().getLaunchIntentForPackage(BuildConfig.APPLICATION_ID);
+            mainIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_NO_ANIMATION);
+            context.startActivity(mainIntent);
         }
     }
 }
