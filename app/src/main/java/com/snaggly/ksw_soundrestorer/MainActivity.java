@@ -20,7 +20,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
-import com.wits.pms.IPowerManagerAppService;
+import com.wits.pms.mcu.McuService;
 
 import java.util.List;
 
@@ -38,11 +38,12 @@ public class MainActivity extends AppCompatActivity {
 
         try{
            Thread.sleep(500);
+           startService(new Intent(this, McuService.class));
         }
         catch(Exception e){
             Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_LONG).show();
         }
         //Toast.makeText(getApplicationContext(), "Executed!\n" + getPackageName(), Toast.LENGTH_LONG).show();
-        finish();
+        //finish();
     }
 }
