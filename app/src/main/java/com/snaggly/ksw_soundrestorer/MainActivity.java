@@ -38,7 +38,7 @@ public class MainActivity extends AppCompatActivity {
 
         try{
            Thread.sleep(500);
-           startService(new Intent(this, McuService.class));
+           startService(new Intent(this, ActivityService.class));
         }
         catch(Exception e){
             Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_LONG).show();
