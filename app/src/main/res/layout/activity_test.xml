@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="horizontal"
+    tools:context=".TestActivity">
+
+    <Button
+        android:id="@+id/serviceStartButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="40dp"
+        android:layout_marginTop="12dp"
+        android:text="@string/start_service"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/isServiceRunningText" />
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/texfieldCmd"
+        android:layout_width="808dp"
+        android:layout_height="103dp"
+        android:layout_marginStart="36dp"
+        android:layout_marginTop="148dp"
+        android:textColorHint="#FFFFFF"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:layout_width="250dp"
+            android:layout_height="40dp"
+            android:hint="@string/command_type"
+            android:inputType="text"
+            android:textColor="#E5E5E5"
+            android:textColorHighlight="#A0A0A0"
+            android:textColorHint="#FDD2D2"
+            android:textColorLink="#FFFFFF"
+            tools:layout_editor_absoluteX="36dp"
+            tools:layout_editor_absoluteY="161dp" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <Button
+        android:id="@+id/sendCommandBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="76dp"
+        android:layout_marginTop="4dp"
+        android:text="@string/send_command"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/texfieldCmd" />
+
+    <TextView
+        android:id="@+id/isServiceRunningText"
+        android:layout_width="261dp"
+        android:layout_height="50dp"
+        android:layout_marginStart="36dp"
+        android:layout_marginTop="4dp"
+        android:text="@string/service_running"
+        android:textColor="#FFFFFF"
+        android:textSize="30sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/texfieldBytes"
+        android:layout_width="246dp"
+        android:layout_height="54dp"
+        android:layout_marginStart="36dp"
+        android:layout_marginTop="196dp"
+        android:textColorHint="#FFFFFF"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:layout_width="250dp"
+            android:layout_height="40dp"
+            android:hint="@string/bytes"
+            android:inputType="text"
+            android:textColor="#E5E5E5"
+            android:textColorHighlight="#A0A0A0"
+            android:textColorHint="#FDD2D2"
+            android:textColorLink="#FFFFFF"
+            tools:layout_editor_absoluteX="36dp"
+            tools:layout_editor_absoluteY="207dp" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <ListView
+        android:id="@+id/mcuListView"
+        android:layout_width="900dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="340dp"
+        android:layout_marginTop="8dp"
+        android:background="#FFFFFF"
+        android:drawSelectorOnTop="false"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/stopServiceBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="12dp"
+        android:text="@string/stop_service"
+        app:layout_constraintStart_toEndOf="@+id/serviceStartButton"
+        app:layout_constraintTop_toBottomOf="@+id/isServiceRunningText" />
+
+    <SeekBar
+        android:id="@+id/interceptIntervalSeekBar"
+        android:layout_width="309dp"
+        android:layout_height="33dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:backgroundTint="#FDFDFD"
+        android:max="1000"
+        android:progressBackgroundTint="#FFFFFF"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/sendCommandBtn" />
+
+    <TextView
+        android:id="@+id/intervalSeekBarInfoText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="19dp"
+        android:layout_marginTop="92dp"
+        android:text="@string/intercept_interval"
+        android:textColor="#FFFFFF"
+        android:textColorHighlight="#9E9696"
+        android:textColorHint="#FFFFFF"
+        android:textColorLink="#C3E6F6"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/texfieldCmd" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
