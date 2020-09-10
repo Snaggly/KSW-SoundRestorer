@@ -106,30 +106,4 @@
         app:layout_constraintStart_toEndOf="@+id/serviceStartButton"
         app:layout_constraintTop_toBottomOf="@+id/isServiceRunningText" />
 
-    <SeekBar
-        android:id="@+id/interceptIntervalSeekBar"
-        android:layout_width="309dp"
-        android:layout_height="33dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:backgroundTint="#FDFDFD"
-        android:max="1000"
-        android:progressBackgroundTint="#FFFFFF"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/sendCommandBtn" />
-
-    <TextView
-        android:id="@+id/intervalSeekBarInfoText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="19dp"
-        android:layout_marginTop="92dp"
-        android:text="@string/intercept_interval"
-        android:textColor="#FFFFFF"
-        android:textColorHighlight="#9E9696"
-        android:textColorHint="#FFFFFF"
-        android:textColorLink="#C3E6F6"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/texfieldCmd" />
-
 </androidx.constraintlayout.widget.ConstraintLayout>

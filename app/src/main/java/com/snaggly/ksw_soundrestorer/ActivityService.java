@@ -17,7 +17,7 @@ public class ActivityService extends Service {
         super.onCreate();
         try {
             McuCommunicator.makeAndGetInstance(action);
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         isRunning = true;

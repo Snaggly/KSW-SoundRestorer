@@ -43,27 +43,6 @@ public class TestActivity extends AppCompatActivity {
         textCmd.getEditText().setText("103");
         textBytes.getEditText().setText("1");
 
-        intervalSeekBar = findViewById(R.id.interceptIntervalSeekBar);
-        intervalText = findViewById(R.id.intervalSeekBarInfoText);
-        intervalSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
-                intervalText.setText(getString(R.string.intercept_interval) + " " + i + "ms");
-                McuCommunicator.setInterval(i);
-            }
-
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-
-            }
-
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-
-            }
-        });
-        intervalSeekBar.setProgress(250);
-
         Intent activityServiceIntent = new Intent(this, ActivityService.class);
         listMcu = findViewById(R.id.mcuListView);
         mcuEventAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_activated_1, mcuEvents);
@@ -87,11 +66,11 @@ public class TestActivity extends AppCompatActivity {
                 }
                 try {
                     McuCommunicator.getInstance().sendCommand(Integer.parseInt(textCmd.getEditText().getText().toString()), data, false);
+                    Toast.makeText(view.getContext(), "Sent command.", Toast.LENGTH_SHORT).show();
                 } catch (Exception e) {
                     Toast.makeText(view.getContext(), "Error in sending!\n" + e.getMessage(), Toast.LENGTH_LONG).show();
                     e.printStackTrace();
                 }
-                Toast.makeText(view.getContext(), "Sent command.", Toast.LENGTH_SHORT).show();
             }
             else {
                 Toast.makeText(view.getContext(), "Service not running.", Toast.LENGTH_SHORT).show();
