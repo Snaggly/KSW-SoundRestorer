@@ -4,11 +4,8 @@ import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;
 
-import java.io.IOException;
-
-public class ActivityService extends Service {
+public class ActivityService extends Service implements McuAction {
     public static boolean isRunning = false;
-    private McuAction action = new McuAction();
     public ActivityService() {
     }
 
@@ -16,7 +13,7 @@ public class ActivityService extends Service {
     public void onCreate() {
         super.onCreate();
         try {
-            McuCommunicator.makeAndGetInstance(action);
+            McuCommunicator.makeAndGetInstance(this);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -25,7 +22,12 @@ public class ActivityService extends Service {
 
     @Override
     public void onDestroy() {
-        McuCommunicator.getInstance().killCommunicator();
+        try {
+            McuCommunicator.getInstance().killCommunicator();
+        }
+        catch (Exception e){
+            e.printStackTrace();
+        }
         super.onDestroy();
         isRunning = false;
     }
@@ -36,16 +38,18 @@ public class ActivityService extends Service {
         throw new UnsupportedOperationException("Not yet implemented");
     }
 
-    private class McuAction implements IMcuAction{
-
-        @Override
-        public void update(int cmdType, byte[] data) {
-            if (TestActivity.instance !=null){
-                String dataStr = "";
-                for (byte b = 4; b<data.length-1; b++)
-                    dataStr+=Integer.toHexString(b) +" ";
-                TestActivity.instance.addNewItemToList("Command: " + cmdType + "\n Data: { " + dataStr +"}");
-            }
+    @Override
+    public void update(int cmdType, byte[] data) {
+        if (TestActivity.instance !=null){
+            String dataStr = "";
+            for (byte b = 4; b<data.length-1; b++)
+                dataStr+=Integer.toHexString(b) +" ";
+            TestActivity.instance.addNewItemToList("Command: " + cmdType + "\n Data: { " + dataStr +"}");
         }
+    }
+
+    @Override
+    public void update(String logcatMessage) {
+        TestActivity.instance.addNewItemToList(logcatMessage);
     }
 }

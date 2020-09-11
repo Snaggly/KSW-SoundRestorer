@@ -1,7 +1,5 @@
 package com.snaggly.ksw_soundrestorer;
 
-import android.util.Log;
-
 import java.io.InputStream;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -13,7 +11,7 @@ import com.fazecast.jSerialComm.SerialPortInvalidPortException;
 
 public class McuCommunicator implements SerialPortDataListener{
     private static McuCommunicator instance;
-    private IMcuAction handler;
+    private McuAction handler;
     private SerialPort serial;
     private Thread readerThread;
     private InputStream serialReader;
@@ -26,41 +24,26 @@ public class McuCommunicator implements SerialPortDataListener{
         return Runtime.getRuntime().exec(cmd);
     }
 
-    private McuCommunicator(IMcuAction handler) {
+    private McuCommunicator(McuAction handler) {
         this.handler = handler;
         serial = SerialPort.getCommPorts()[0];
         serial.setBaudRate(115200);
         serial.addDataListener(this);
         serial.openPort();
-        readerThread = new Thread(() -> {
-           while(true){
-               try {
-                   int availTest = serial.bytesAvailable();
-                   if (availTest > 5){
-                       frame = new byte[availTest];
-                       serial.readBytes(frame, availTest);
-                       if (frame[0] != (byte)0xf2)
-                           continue;
-                       update  = frame[1] == (byte)160 ? true : false;
-                       cmdType = frame[2];
-                       if ((byte)checkSum() == frame[frame.length-1]);
-                           announceMCUEvent();
-                   }
-               } catch (Exception e) {
-                   e.printStackTrace();
-               }
-           }
-        });
-        //readerThread.start();
     }
 
     public static McuCommunicator getInstance() {
         return instance;
     }
 
-    public static McuCommunicator makeAndGetInstance(IMcuAction handler) {
+    public static McuCommunicator makeAndGetInstance(McuAction handler) {
         if (instance == null && handler != null){
-            instance = new McuCommunicator(handler);
+            try {
+                instance = new McuCommunicator(handler);
+            }
+            catch (Exception e){
+                instance = null;
+            }
         } else {
             return null;
         }
