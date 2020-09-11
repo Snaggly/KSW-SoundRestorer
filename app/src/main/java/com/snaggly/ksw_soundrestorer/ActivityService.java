@@ -42,7 +42,7 @@ public class ActivityService extends Service {
         public void update(int cmdType, byte[] data) {
             if (TestActivity.instance !=null){
                 String dataStr = "";
-                for (byte b : data)
+                for (byte b = 4; b<data.length-1; b++)
                     dataStr+=Integer.toHexString(b) +" ";
                 TestActivity.instance.addNewItemToList("Command: " + cmdType + "\n Data: { " + dataStr +"}");
             }

@@ -1,7 +1,10 @@
 package com.snaggly.ksw_soundrestorer;
 
+import android.util.Log;
+
 import java.io.InputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 
 import com.fazecast.jSerialComm.SerialPort;
 import com.fazecast.jSerialComm.SerialPortDataListener;
@@ -12,8 +15,12 @@ public class McuCommunicator implements SerialPortDataListener{
     private static McuCommunicator instance;
     private IMcuAction handler;
     private SerialPort serial;
+    private Thread readerThread;
+    private InputStream serialReader;
+    private OutputStream serialWriter;
     private int cmdType;
-    private byte[] data;
+    private boolean update;
+    private byte[] frame;
 
     private Process executeShell(String cmd) throws IOException {
         return Runtime.getRuntime().exec(cmd);
@@ -21,10 +28,30 @@ public class McuCommunicator implements SerialPortDataListener{
 
     private McuCommunicator(IMcuAction handler) {
         this.handler = handler;
-        serial = SerialPort.getCommPort("/dev/ttyMSM1");
+        serial = SerialPort.getCommPorts()[0];
         serial.setBaudRate(115200);
         serial.addDataListener(this);
         serial.openPort();
+        readerThread = new Thread(() -> {
+           while(true){
+               try {
+                   int availTest = serial.bytesAvailable();
+                   if (availTest > 5){
+                       frame = new byte[availTest];
+                       serial.readBytes(frame, availTest);
+                       if (frame[0] != (byte)0xf2)
+                           continue;
+                       update  = frame[1] == (byte)160 ? true : false;
+                       cmdType = frame[2];
+                       if ((byte)checkSum() == frame[frame.length-1]);
+                           announceMCUEvent();
+                   }
+               } catch (Exception e) {
+                   e.printStackTrace();
+               }
+           }
+        });
+        //readerThread.start();
     }
 
     public static McuCommunicator getInstance() {
@@ -50,6 +77,7 @@ public class McuCommunicator implements SerialPortDataListener{
     public void killCommunicator(){
         try{
             serial.removeDataListener();
+            readerThread.interrupt();
         }
         catch(Exception e){
             e.printStackTrace();
@@ -58,27 +86,27 @@ public class McuCommunicator implements SerialPortDataListener{
     }
 
     private void announceMCUEvent(){
-        handler.update(cmdType, data);
+        handler.update(cmdType, frame);
     }
 
-    private int checkSum(int cmdType, byte[] data){
-        int sum = cmdType + data.length;
-        for (byte b: data)
-            sum += b;
+    private int checkSum(){
+        int sum = 0;
+        for (byte b = 1; b<frame.length-1; b++)
+            sum += frame[b];
 
         return 0xFF - sum;
     }
 
-    private byte[] KSWobtain(int cmdType, byte[] data, boolean update) {
-        byte[] bytes = new byte[(data.length + 5)];
-        bytes[0] = (byte) 242;
-        bytes[1] = update ? (byte)160 : 0;
-        bytes[2] = (byte) cmdType;
-        bytes[3] = (byte) data.length;
-        System.arraycopy(data, 0, bytes, 4, data.length);
-        bytes[bytes.length-1] = (byte)checkSum(cmdType, data);
+    public byte[] KSWobtain(int cmdType, byte[] data, boolean update) {
+        frame = new byte[(data.length + 5)];
+        frame[0] = (byte) 242;
+        frame[1] = update ? (byte)160 : 0;
+        frame[2] = (byte) cmdType;
+        frame[3] = (byte) data.length;
+        System.arraycopy(data, 0, frame, 4, data.length);
+        frame[frame.length-1] = (byte)checkSum();
 
-        return bytes;
+        return frame;
     }
 
     @Override
@@ -88,13 +116,6 @@ public class McuCommunicator implements SerialPortDataListener{
 
     @Override
     public void serialEvent(SerialPortEvent event) {
-        byte[] frame = event.getReceivedData();
-        if (frame[0] == (byte)242){
-            cmdType = frame[2];
-            data = new byte[frame[3]];
-            System.arraycopy(frame, 4, data, 0, data.length);
-            if (checkSum(cmdType, data) == frame[frame.length-1])
-                announceMCUEvent();
-        }
+        return;
     }
 }
