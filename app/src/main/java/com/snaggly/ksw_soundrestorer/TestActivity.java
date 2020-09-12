@@ -30,6 +30,7 @@ public class TestActivity extends AppCompatActivity {
     private TextView intervalText;
     private SeekBar intervalSeekBar;
     public static TestActivity instance;
+    private Intent activityService;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,20 +44,25 @@ public class TestActivity extends AppCompatActivity {
         textBytes = findViewById(R.id.texfieldBytes);
         textCmd.getEditText().setText("103");
         textBytes.getEditText().setText("1");
+        activityService = new Intent(this, ActivityService.class);
 
         Intent activityServiceIntent = new Intent(this, ActivityService.class);
         listMcu = findViewById(R.id.mcuListView);
         mcuEventAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_activated_1, mcuEvents);
         listMcu.setAdapter(mcuEventAdapter);
         findViewById(R.id.serviceStartButton).setOnClickListener(view -> {
-            startService(new Intent(view.getContext(), ActivityService.class));
-            Toast.makeText(view.getContext(), "Service starting...", Toast.LENGTH_SHORT).show();
-            runningLabel.setText(R.string.service_running);
+            startService(activityService);
+            if (ActivityService.isRunning){
+                Toast.makeText(view.getContext(), "Service starting...", Toast.LENGTH_SHORT).show();
+                runningLabel.setText(R.string.service_running);
+            }
         });
         findViewById(R.id.stopServiceBtn).setOnClickListener(view -> {
-            stopService(new Intent(view.getContext(), ActivityService.class));
-            Toast.makeText(view.getContext(), "Service stopping...", Toast.LENGTH_SHORT).show();
-            runningLabel.setText(R.string.service_stopped);
+            stopService(activityService);
+            if (!ActivityService.isRunning) {
+                Toast.makeText(view.getContext(), "Service stopping...", Toast.LENGTH_SHORT).show();
+                runningLabel.setText(R.string.service_stopped);
+            }
         });
         findViewById(R.id.sendCommandBtn).setOnClickListener(view -> {
             if (McuCommunicator.getInstance() != null) {

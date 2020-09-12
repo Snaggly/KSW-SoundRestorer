@@ -3,38 +3,35 @@ package com.snaggly.ksw_soundrestorer;
 import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;
+import android.widget.Toast;
 
 public class ActivityService extends Service implements McuAction {
     public static boolean isRunning = false;
-    public ActivityService() {
-    }
 
     @Override
     public void onCreate() {
-        super.onCreate();
-        try {
-            McuCommunicator.makeAndGetInstance(this);
-        } catch (Exception e) {
-            e.printStackTrace();
+        try{
+            if ((McuCommunicator.makeAndGetInstance(this)) != null)
+                isRunning = true;
         }
-        isRunning = true;
+        catch (Exception e){
+            Toast.makeText(getApplicationContext(), "Failed to set up Serial connection to MCU!", Toast.LENGTH_LONG).show();
+            stopSelf();
+        }
+
+        super.onCreate();
     }
 
     @Override
     public void onDestroy() {
-        try {
-            McuCommunicator.getInstance().killCommunicator();
-        }
-        catch (Exception e){
-            e.printStackTrace();
-        }
         super.onDestroy();
+        if (McuCommunicator.getInstance()!=null)
+            McuCommunicator.getInstance().killCommunicator();
         isRunning = false;
     }
 
     @Override
     public IBinder onBind(Intent intent) {
-        // TODO: Return the communication channel to the service.
         throw new UnsupportedOperationException("Not yet implemented");
     }
 

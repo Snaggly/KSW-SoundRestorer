@@ -20,12 +20,18 @@ public class McuCommunicator implements SerialPortDataListener{
         return Runtime.getRuntime().exec(cmd);
     }
 
-    private McuCommunicator(McuAction handler) {
-        this.handler = handler;
-        serial = SerialPort.getCommPorts()[0];
+    private McuCommunicator(McuAction handler) throws SerialPortInvalidPortException{
+        try{
+            serial = SerialPort.getCommPorts()[0];
+        }
+        catch (ArrayIndexOutOfBoundsException e){
+            throw new SerialPortInvalidPortException("No serial ports!");
+        }
         serial.setBaudRate(115200);
         serial.addDataListener(this);
         serial.openPort();
+
+        this.handler = handler;
         readerThread = new LogcatReader(handler);
         readerThread.startReading();
     }
@@ -34,17 +40,10 @@ public class McuCommunicator implements SerialPortDataListener{
         return instance;
     }
 
-    public static McuCommunicator makeAndGetInstance(McuAction handler) {
-        if (instance == null && handler != null){
-            try {
-                instance = new McuCommunicator(handler);
-            }
-            catch (Exception e){
-                instance = null;
-            }
-        } else {
-            return null;
-        }
+    public static McuCommunicator makeAndGetInstance(McuAction handler) throws SerialPortInvalidPortException {
+        if (instance == null && handler != null)
+            instance = new McuCommunicator(handler);
+
         return instance;
     }
 
