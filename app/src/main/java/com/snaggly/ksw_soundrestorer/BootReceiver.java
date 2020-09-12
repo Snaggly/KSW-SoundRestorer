@@ -5,10 +5,13 @@ import android.content.Context;
 import android.content.Intent;
 
 public class BootReceiver extends BroadcastReceiver implements McuAction {
+    McuCommunicator communicator;
+
     @Override
     public void onReceive(Context context, Intent intent) {
         if (Intent.ACTION_BOOT_COMPLETED.equals(intent.getAction())){
-            McuCommunicator.makeAndGetInstance(this).sendCommand(103, new byte[]{1}, false);
+            communicator = McuCommunicator.makeAndGetInstance(this);
+            communicator.sendCommand(McuCommands.SET_TO_MUSIC_SOURCE);
         }
     }
 

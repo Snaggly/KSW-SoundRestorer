@@ -13,11 +13,7 @@ public class McuCommunicator implements SerialPortDataListener{
     private static McuCommunicator instance;
     private McuAction handler;
     private SerialPort serial;
-    private Thread readerThread;
-    private InputStream serialReader;
-    private OutputStream serialWriter;
-    private int cmdType;
-    private boolean update;
+    private LogcatReader readerThread;
     private byte[] frame;
 
     private Process executeShell(String cmd) throws IOException {
@@ -30,6 +26,8 @@ public class McuCommunicator implements SerialPortDataListener{
         serial.setBaudRate(115200);
         serial.addDataListener(this);
         serial.openPort();
+        readerThread = new LogcatReader(handler);
+        readerThread.startReading();
     }
 
     public static McuCommunicator getInstance() {
@@ -57,19 +55,19 @@ public class McuCommunicator implements SerialPortDataListener{
         } else throw new SerialPortInvalidPortException("Port not open!");
     }
 
+    public void sendCommand(McuCommands mcuCommands) throws SerialPortInvalidPortException {
+        sendCommand(mcuCommands.getCommand(), mcuCommands.getData(), mcuCommands.getUpdate());
+    }
+
     public void killCommunicator(){
         try{
             serial.removeDataListener();
-            readerThread.interrupt();
+            readerThread.stopReading();
         }
         catch(Exception e){
             e.printStackTrace();
         }
         instance = null;
-    }
-
-    private void announceMCUEvent(){
-        handler.update(cmdType, frame);
     }
 
     private int checkSum(){
