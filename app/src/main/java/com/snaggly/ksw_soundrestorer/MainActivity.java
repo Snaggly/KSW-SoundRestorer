@@ -2,43 +2,66 @@ package com.snaggly.ksw_soundrestorer;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.app.ActivityManager;
-import android.app.ActivityManager.RunningAppProcessInfo;
-import android.content.Context;
+import android.app.AlertDialog;
 import android.content.Intent;
-import android.graphics.Interpolator;
-import android.media.AudioManager;
-import android.net.Uri;
-import android.os.Build;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
-import android.os.IBinder;
-import android.os.Parcel;
-import android.os.SystemClock;
-import android.os.UserHandle;
-import android.provider.Settings;
-import android.util.Log;
-import android.view.KeyEvent;
-import android.view.View;
-import android.widget.Button;
+import android.os.Process;
 import android.widget.Toast;
 
-import com.wits.pms.mcu.McuService;
-
-import java.util.List;
+import java.io.DataOutputStream;
+import java.io.IOException;
 
 public class MainActivity extends AppCompatActivity {
-    final public static String targetPackage = "com.wits.ksw.bt";
-    final public static int ACTION_MANAGE_OVERLAY_PERMISSION_REQUEST_CODE = 5469;
     final public static String TAG = "KSW-SoundRestorer";
+    final public String reqPermission = "android.permission.READ_LOGS";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        if(!checkPermission()){
+            if (!attemptRoot()){
+                AlertDialog.Builder dlgAlert  = new AlertDialog.Builder(this);
+                dlgAlert.setMessage("Failed to get permissions!\nIf your device is not rooted, manually permit READ_LOGS permission via adb!");
+                dlgAlert.setTitle(TAG);
+                dlgAlert.setPositiveButton("OK", null);
+                dlgAlert.setCancelable(true);
+                dlgAlert.setPositiveButton("Ok", (dialog, which) -> { startTest(); });
+                dlgAlert.create().show();
+            }
+            else {
+                startTest();
+            }
+        }
+        else startTest();
+    }
+
+    private void startTest(){
         try{
             startActivity(new Intent(this, TestActivity.class));
         }
         catch(Exception e){
             Toast.makeText(this, e.getMessage(), Toast.LENGTH_LONG).show();
+        }
+    }
+
+    public boolean checkPermission() {
+        return this.checkPermission(reqPermission, Process.myPid(), Process.myUid()) == PackageManager.PERMISSION_GRANTED;
+    }
+
+    public boolean attemptRoot() {
+        try {
+            java.lang.Process su = Runtime.getRuntime().exec("su");
+            DataOutputStream dosSU = new DataOutputStream(su.getOutputStream());
+            dosSU.writeBytes("pm grant " + BuildConfig.APPLICATION_ID + " android.permission.READ_LOGS\n");
+            dosSU.flush();
+            dosSU.writeBytes("exit\n");
+            dosSU.close();
+            su.waitFor();
+            return checkPermission();
+        } catch (IOException | InterruptedException e) {
+            return false;
         }
     }
 }

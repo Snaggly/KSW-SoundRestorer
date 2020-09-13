@@ -2,28 +2,17 @@ package com.snaggly.ksw_soundrestorer;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.app.Instrumentation;
-import android.content.Context;
 import android.content.Intent;
-import android.media.AudioManager;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Process;
-import android.util.Log;
-import android.view.KeyEvent;
-import android.view.View;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.ListView;
-import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.material.textfield.TextInputLayout;
 
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.concurrent.atomic.AtomicInteger;
 
 public class TestActivity extends AppCompatActivity {
 
@@ -32,8 +21,6 @@ public class TestActivity extends AppCompatActivity {
     private ArrayList<String> mcuEvents = new ArrayList<String>();
     private TextInputLayout textCmd;
     private TextInputLayout textBytes;
-    private TextView intervalText;
-    private SeekBar intervalSeekBar;
     public static TestActivity instance;
     private Intent activityService;
 
@@ -52,7 +39,6 @@ public class TestActivity extends AppCompatActivity {
         textBytes.getEditText().setText("1");
         activityService = new Intent(this, ActivityService.class);
 
-        Intent activityServiceIntent = new Intent(this, ActivityService.class);
         listMcu = findViewById(R.id.mcuListView);
         mcuEventAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_activated_1, mcuEvents);
         listMcu.setAdapter(mcuEventAdapter);

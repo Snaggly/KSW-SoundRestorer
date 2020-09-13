@@ -1,7 +1,6 @@
 package com.snaggly.ksw_soundrestorer;
 
 import android.util.Log;
-import android.widget.Toast;
 
 import java.io.BufferedReader;
 import java.io.IOException;

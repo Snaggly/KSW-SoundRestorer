@@ -1,10 +1,6 @@
 package com.snaggly.ksw_soundrestorer;
 
-import android.util.Log;
-
-import java.io.InputStream;
 import java.io.IOException;
-import java.io.OutputStream;
 
 import com.fazecast.jSerialComm.SerialPort;
 import com.fazecast.jSerialComm.SerialPortDataListener;
@@ -18,12 +14,8 @@ public class McuCommunicator implements SerialPortDataListener{
     private LogcatReader readerThread;
     private byte[] frame;
 
-    private Process executeShell(String cmd) throws IOException {
-        return Runtime.getRuntime().exec(cmd);
-    }
-
     private McuCommunicator() throws SerialPortInvalidPortException{
-        /*try{
+        try{
             serial = SerialPort.getCommPorts()[0];
         }
         catch (ArrayIndexOutOfBoundsException e){
@@ -31,7 +23,7 @@ public class McuCommunicator implements SerialPortDataListener{
         }
         serial.setBaudRate(115200);
         serial.addDataListener(this);
-        serial.openPort();*/
+        serial.openPort();
     }
 
     public static McuCommunicator getInstance() {

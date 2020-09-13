@@ -45,7 +45,7 @@ public class ActivityService extends Service implements McuAction {
         try{
             if ((McuCommunicator.makeAndGetInstance()).startReading(this) != null)
                 isRunning = true;
-            //McuCommunicator.getInstance().sendCommand(McuCommands.SET_TO_MUSIC_SOURCE);
+            McuCommunicator.getInstance().sendCommand(McuCommands.SET_TO_MUSIC_SOURCE);
         }
         catch (Exception e){
             Toast.makeText(this, "Failed to set up Serial connection to MCU!", Toast.LENGTH_LONG).show();

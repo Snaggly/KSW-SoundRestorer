@@ -2,7 +2,6 @@ package com.snaggly.ksw_soundrestorer;
 
 import android.content.Context;
 import android.media.AudioManager;
-import android.util.Log;
 import android.view.KeyEvent;
 
 public class SoundManager {
