@@ -6,6 +6,7 @@ import android.app.Instrumentation;
 import android.content.Context;
 import android.content.Intent;
 import android.media.AudioManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Process;
 import android.util.Log;
@@ -57,7 +58,9 @@ public class TestActivity extends AppCompatActivity {
         listMcu.setAdapter(mcuEventAdapter);
 
         findViewById(R.id.serviceStartButton).setOnClickListener(view -> {
-            startService(activityService);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                startForegroundService(activityService);
+            }
             Toast.makeText(view.getContext(), "Service starting...", Toast.LENGTH_SHORT).show();
             runningLabel.setText(R.string.service_running);
 
