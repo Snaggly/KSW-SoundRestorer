@@ -29,21 +29,16 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity {
     final public static String targetPackage = "com.wits.ksw.bt";
     final public static int ACTION_MANAGE_OVERLAY_PERMISSION_REQUEST_CODE = 5469;
+    final public static String TAG = "KSW-SoundRestorer";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        if (Build.VERSION.SDK_INT >= 23 && !Settings.canDrawOverlays(this)) {
-            startActivityForResult(new Intent("android.settings.action.MANAGE_OVERLAY_PERMISSION", Uri.parse("package:" + getPackageName())), ACTION_MANAGE_OVERLAY_PERMISSION_REQUEST_CODE);
+        try{
+            startActivity(new Intent(this, TestActivity.class));
         }
-        else {
-            try{
-                startActivity(new Intent(this, TestActivity.class));
-            }
-            catch(Exception e){
-                Toast.makeText(this, e.getMessage(), Toast.LENGTH_LONG).show();
-            }
+        catch(Exception e){
+            Toast.makeText(this, e.getMessage(), Toast.LENGTH_LONG).show();
         }
     }
 }

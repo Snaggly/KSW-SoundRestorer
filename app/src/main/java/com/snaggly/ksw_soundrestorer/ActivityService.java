@@ -3,30 +3,21 @@ package com.snaggly.ksw_soundrestorer;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
-import android.media.AudioAttributes;
-import android.media.AudioFocusRequest;
-import android.media.AudioManager;
-import android.media.MediaPlayer;
 import android.os.Build;
 import android.os.IBinder;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.widget.Toast;
 
 import androidx.annotation.RequiresApi;
 import androidx.core.app.NotificationCompat;
-import androidx.core.app.NotificationManagerCompat;
 
 public class ActivityService extends Service implements McuAction {
     public static boolean isRunning = false;
-    private AudioManager am;
-    private KeyEvent playEvent;
-    private KeyEvent pauseEvent;
+    private SoundManager sm;
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     private void startMyOwnForeground(){
@@ -52,36 +43,26 @@ public class ActivityService extends Service implements McuAction {
     @Override
     public void onCreate() {
         try{
-            am = (AudioManager)this.getSystemService(Context.AUDIO_SERVICE);
-            playEvent = new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_MEDIA_PLAY);
-            pauseEvent = new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_MEDIA_PAUSE);
-
-            try{
-                if ((McuCommunicator.makeAndGetInstance()).startReading(this) != null)
-                    isRunning = true;
-                //McuCommunicator.getInstance().sendCommand(McuCommands.SET_TO_MUSIC_SOURCE);
-            }
-            catch (Exception e){
-                Toast.makeText(this, "Failed to set up Serial connection to MCU!", Toast.LENGTH_LONG).show();
-                stopSelf();
-            }
-            Log.d(BuildConfig.TAG, "Started Service...");
-
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                startMyOwnForeground();
-            }
+            if ((McuCommunicator.makeAndGetInstance()).startReading(this) != null)
+                isRunning = true;
+            //McuCommunicator.getInstance().sendCommand(McuCommands.SET_TO_MUSIC_SOURCE);
         }
         catch (Exception e){
-            Log.d(BuildConfig.TAG, e.getMessage());
+            Toast.makeText(this, "Failed to set up Serial connection to MCU!", Toast.LENGTH_LONG).show();
+            stopSelf();
         }
-
-        am.dispatchMediaKeyEvent(pauseEvent);
         try {
-            Thread.sleep(3000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+            sm = new SoundManager(this);
+            sm.startCheckingThread();
         }
-        am.dispatchMediaKeyEvent(playEvent);
+        catch (Exception e){
+            Toast.makeText(this, "Failed to set up AudioManager!\nYou'll have to manually unpause music when switching.", Toast.LENGTH_LONG).show();
+        }
+        Log.d(MainActivity.TAG, "Started Service...");
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            startMyOwnForeground();
+        }
 
         super.onCreate();
     }
@@ -91,7 +72,10 @@ public class ActivityService extends Service implements McuAction {
         super.onDestroy();
         if (McuCommunicator.getInstance()!=null)
             McuCommunicator.getInstance().killCommunicator();
-        Log.d(BuildConfig.TAG, "Stopped Service...");
+        if (sm != null){
+            sm.stopCheckingThread();
+        }
+        Log.d(MainActivity.TAG, "Stopped Service...");
         isRunning = false;
     }
 
@@ -117,17 +101,13 @@ public class ActivityService extends Service implements McuAction {
 
         if (McuEvent.SWITCHED_TO_OEM.equals(logcatMessage)){
             McuCommunicator.getInstance().sendCommand(McuCommands.SET_TO_ATSL_AIRCONSOLE);
-            if (am.isMusicActive()){
-                am.dispatchMediaKeyEvent(pauseEvent);
-                am.dispatchMediaKeyEvent(playEvent);
-            }
+            if (sm!=null)
+                sm.unpause();
 
         } else if (McuEvent.SWITCHED_TO_OEM.equals(logcatMessage)){
             McuCommunicator.getInstance().sendCommand(McuCommands.SET_TO_MUSIC_SOURCE);
-            if (am.isMusicActive()){
-                am.dispatchMediaKeyEvent(pauseEvent);
-                am.dispatchMediaKeyEvent(playEvent);
-            }
+            if (sm!=null)
+                sm.unpause();
         }
     }
 }
