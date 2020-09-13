@@ -3,6 +3,7 @@ package com.snaggly.ksw_soundrestorer;
 import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;
+import android.util.Log;
 import android.widget.Toast;
 
 public class ActivityService extends Service implements McuAction {
@@ -11,7 +12,7 @@ public class ActivityService extends Service implements McuAction {
     @Override
     public void onCreate() {
         try{
-            if ((McuCommunicator.makeAndGetInstance(this)) != null)
+            if ((McuCommunicator.makeAndGetInstance()).startReading(this) != null)
                 isRunning = true;
         }
         catch (Exception e){

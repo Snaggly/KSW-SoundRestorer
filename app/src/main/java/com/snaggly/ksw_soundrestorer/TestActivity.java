@@ -50,20 +50,20 @@ public class TestActivity extends AppCompatActivity {
         listMcu = findViewById(R.id.mcuListView);
         mcuEventAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_activated_1, mcuEvents);
         listMcu.setAdapter(mcuEventAdapter);
+
         findViewById(R.id.serviceStartButton).setOnClickListener(view -> {
             startService(activityService);
-            if (ActivityService.isRunning){
-                Toast.makeText(view.getContext(), "Service starting...", Toast.LENGTH_SHORT).show();
-                runningLabel.setText(R.string.service_running);
-            }
+            Toast.makeText(view.getContext(), "Service starting...", Toast.LENGTH_SHORT).show();
+            runningLabel.setText(R.string.service_running);
+
         });
         findViewById(R.id.stopServiceBtn).setOnClickListener(view -> {
             stopService(activityService);
-            if (!ActivityService.isRunning) {
-                Toast.makeText(view.getContext(), "Service stopping...", Toast.LENGTH_SHORT).show();
-                runningLabel.setText(R.string.service_stopped);
-            }
+            Toast.makeText(view.getContext(), "Service stopping...", Toast.LENGTH_SHORT).show();
+            runningLabel.setText(R.string.service_stopped);
+
         });
+
         findViewById(R.id.sendCommandBtn).setOnClickListener(view -> {
             if (McuCommunicator.getInstance() != null) {
                 String[] bytesStr = textBytes.getEditText().getText().toString().split(",");

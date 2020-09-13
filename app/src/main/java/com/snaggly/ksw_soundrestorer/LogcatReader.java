@@ -1,8 +1,12 @@
 package com.snaggly.ksw_soundrestorer;
 
+import android.util.Log;
+import android.widget.Toast;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.InterruptedIOException;
 
 public class LogcatReader {
     private Thread readerThread;
@@ -27,18 +31,33 @@ public class LogcatReader {
             }
             BufferedReader bufRead = new BufferedReader(new InputStreamReader(logProc.getInputStream()));
             String line = "";
-            while (true){
-                try {
-                    line = bufRead.readLine();
-                    if (line.contains("--Mcu toString-----")){
-                        line.substring(line.lastIndexOf('[' + 1), line.lastIndexOf(']' - 1));
-                        callback.update(line);
+            try{
+                while (true){
+                    try{
+                        while (bufRead.ready()){
+                            line = bufRead.readLine();
+                            if (line.contains("--Mcu toString-----")) {
+                                line.substring(line.lastIndexOf('[' + 1), line.lastIndexOf(']' - 1));
+                                callback.update(line);
+                            }
+                            System.out.println("Hi");
+                        }
+                        Log.i("KswMcuListener", "End-Of-Line");
+                        try {
+                            Thread.sleep(1000);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
                     }
-                } catch (IOException e) {
-                    e.printStackTrace();
+                    catch (InterruptedIOException e){
+                        break;
+                    }
                 }
-            }
 
+            }
+            catch (IOException e) {
+                e.printStackTrace();
+            }
         });
         readerThread.start();
     }

@@ -10,7 +10,7 @@ public class BootReceiver extends BroadcastReceiver implements McuAction {
     @Override
     public void onReceive(Context context, Intent intent) {
         if (Intent.ACTION_BOOT_COMPLETED.equals(intent.getAction())){
-            communicator = McuCommunicator.makeAndGetInstance(this);
+            communicator = McuCommunicator.makeAndGetInstance().startReading(this);
             communicator.sendCommand(McuCommands.SET_TO_MUSIC_SOURCE);
         }
     }

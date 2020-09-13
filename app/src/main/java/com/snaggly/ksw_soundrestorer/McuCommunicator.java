@@ -1,5 +1,7 @@
 package com.snaggly.ksw_soundrestorer;
 
+import android.util.Log;
+
 import java.io.InputStream;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -20,29 +22,41 @@ public class McuCommunicator implements SerialPortDataListener{
         return Runtime.getRuntime().exec(cmd);
     }
 
-    private McuCommunicator(McuAction handler) throws SerialPortInvalidPortException{
+    private McuCommunicator() throws SerialPortInvalidPortException{
         try{
-            serial = SerialPort.getCommPorts()[0];
+            //serial = SerialPort.getCommPorts()[0];
         }
         catch (ArrayIndexOutOfBoundsException e){
             throw new SerialPortInvalidPortException("No serial ports!");
         }
-        serial.setBaudRate(115200);
-        serial.addDataListener(this);
-        serial.openPort();
-
-        this.handler = handler;
-        readerThread = new LogcatReader(handler);
-        readerThread.startReading();
+        //serial.setBaudRate(115200);
+        //serial.addDataListener(this);
+        //serial.openPort();
     }
 
     public static McuCommunicator getInstance() {
         return instance;
     }
 
-    public static McuCommunicator makeAndGetInstance(McuAction handler) throws SerialPortInvalidPortException {
-        if (instance == null && handler != null)
-            instance = new McuCommunicator(handler);
+    public McuCommunicator startReading(McuAction handler){
+        if (handler != null){
+            this.handler = handler;
+            readerThread = new LogcatReader(handler);
+            readerThread.startReading();
+        }
+        return this;
+    }
+
+    public McuCommunicator stopReading(){
+        if (handler != null && readerThread != null){
+            readerThread.stopReading();
+        }
+        return this;
+    }
+
+    public static McuCommunicator makeAndGetInstance() throws SerialPortInvalidPortException {
+        if (instance == null)
+            instance = new McuCommunicator();
 
         return instance;
     }
@@ -61,11 +75,12 @@ public class McuCommunicator implements SerialPortDataListener{
     public void killCommunicator(){
         try{
             serial.removeDataListener();
-            readerThread.stopReading();
         }
         catch(Exception e){
             e.printStackTrace();
         }
+        if (handler != null)
+            stopReading();
         instance = null;
     }
 
