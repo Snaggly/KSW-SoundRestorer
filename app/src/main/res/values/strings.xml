@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">KSW-SoundRestorer-Test</string>
+    <string name="app_name">KSW-SoundRestorer</string>
     <string name="start_service">Start Service</string>
     <string name="stop_service">Stop Service</string>
     <string name="service_running">Service running....</string>

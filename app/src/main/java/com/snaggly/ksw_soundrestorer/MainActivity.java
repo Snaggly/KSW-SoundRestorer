@@ -13,9 +13,11 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.os.Parcel;
+import android.os.SystemClock;
 import android.os.UserHandle;
 import android.provider.Settings;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
@@ -35,15 +37,13 @@ public class MainActivity extends AppCompatActivity {
         if (Build.VERSION.SDK_INT >= 23 && !Settings.canDrawOverlays(this)) {
             startActivityForResult(new Intent("android.settings.action.MANAGE_OVERLAY_PERMISSION", Uri.parse("package:" + getPackageName())), ACTION_MANAGE_OVERLAY_PERMISSION_REQUEST_CODE);
         }
-
-        try{
-           //Thread.sleep(500);
-           startActivity(new Intent(this, TestActivity.class));
+        else {
+            try{
+                startActivity(new Intent(this, TestActivity.class));
+            }
+            catch(Exception e){
+                Toast.makeText(this, e.getMessage(), Toast.LENGTH_LONG).show();
+            }
         }
-        catch(Exception e){
-            Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_LONG).show();
-        }
-        //Toast.makeText(getApplicationContext(), "Executed!\n" + getPackageName(), Toast.LENGTH_LONG).show();
-        //finish();
     }
 }

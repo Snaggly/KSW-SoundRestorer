@@ -32,19 +32,18 @@ public class LogcatReader {
             BufferedReader bufRead = new BufferedReader(new InputStreamReader(logProc.getInputStream()));
             String line = "";
             try{
-                while (true){
+                while (isReading){
                     try{
                         while (bufRead.ready()){
                             line = bufRead.readLine();
                             if (line.contains("--Mcu toString-----")) {
-                                line.substring(line.lastIndexOf('[' + 1), line.lastIndexOf(']' - 1));
+                                line = line.substring(line.lastIndexOf('[') + 2, line.lastIndexOf(']') - 1);
                                 callback.update(line);
                             }
-                            System.out.println("Hi");
                         }
                         Log.i("KswMcuListener", "End-Of-Line");
                         try {
-                            Thread.sleep(1000);
+                            Thread.sleep(500);
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                         }
@@ -64,7 +63,6 @@ public class LogcatReader {
 
     public void stopReading(){
         logProc.destroy();
-        readerThread.interrupt();
         isReading = false;
     }
 }

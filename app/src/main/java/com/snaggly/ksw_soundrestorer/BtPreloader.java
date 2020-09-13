@@ -13,7 +13,7 @@ public class BtPreloader {
             context.startActivity(kswBtIntent);
         }
         catch (Exception e){
-            Toast.makeText(context.getApplicationContext(), targetPackage + " could not be started.\n" + e.getMessage(), Toast.LENGTH_LONG).show();
+            Toast.makeText(context, targetPackage + " could not be started.\n" + e.getMessage(), Toast.LENGTH_LONG).show();
         }
 
         try {
@@ -25,7 +25,7 @@ public class BtPreloader {
             context.startActivity(home);
         }
         catch (Exception e){
-            Toast.makeText(context.getApplicationContext(), "Home could not be started.\n" + e.getMessage(), Toast.LENGTH_LONG).show();
+            Toast.makeText(context, "Home could not be started.\n" + e.getMessage(), Toast.LENGTH_LONG).show();
         }
     }
 }

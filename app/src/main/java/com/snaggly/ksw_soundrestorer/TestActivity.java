@@ -2,10 +2,14 @@ package com.snaggly.ksw_soundrestorer;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.Instrumentation;
+import android.content.Context;
 import android.content.Intent;
+import android.media.AudioManager;
 import android.os.Bundle;
 import android.os.Process;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -36,6 +40,7 @@ public class TestActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_test);
+
         instance = this;
         TextView runningLabel = findViewById(R.id.isServiceRunningText);
         if (!ActivityService.isRunning)
@@ -86,7 +91,7 @@ public class TestActivity extends AppCompatActivity {
     }
 
     public void addNewItemToList(String item){
-        mcuEvents.add(item);
+        mcuEvents.add(0, item);
         runOnUiThread(() -> mcuEventAdapter.notifyDataSetChanged());
     }
 }

@@ -63,7 +63,6 @@ public class McuService extends Service implements McuSender {
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
-                    //Toast.makeText(getApplicationContext(), "Still running", Toast.LENGTH_LONG).show();
                 }
             }).start();
 
@@ -71,20 +70,20 @@ public class McuService extends Service implements McuSender {
             mReadThread.start();*/
         }
         catch (SecurityException e){
-            Toast.makeText(getApplicationContext(), "Exception in McuService onCreate\nSecurityException\n" + e.getMessage(), Toast.LENGTH_LONG).show();
+            Toast.makeText(this, "Exception in McuService onCreate\nSecurityException\n" + e.getMessage(), Toast.LENGTH_LONG).show();
         }
         catch (IOException e){
-            Toast.makeText(getApplicationContext(), "Exception in McuService onCreate\nIOException\n" + e.getMessage(), Toast.LENGTH_LONG).show();
+            Toast.makeText(this, "Exception in McuService onCreate\nIOException\n" + e.getMessage(), Toast.LENGTH_LONG).show();
         }
         catch (Exception e) {
-            Toast.makeText(getApplicationContext(), "Exception in McuService onCreate\n" + e.getMessage(), Toast.LENGTH_LONG).show();
+            Toast.makeText(this, "Exception in McuService onCreate\n" + e.getMessage(), Toast.LENGTH_LONG).show();
         }
-        Toast.makeText(getApplicationContext(), "Created MCUService", Toast.LENGTH_LONG).show();
+        Toast.makeText(this, "Created MCUService", Toast.LENGTH_LONG).show();
         //KswMcuSender.init(this);
     }
 
     public int onStartCommand(Intent intent, int flags, int startId) {
-        mContext = getApplicationContext();
+        mContext = this;
         return super.onStartCommand(intent, flags, startId);
         //return Service.START_NOT_STICKY;
     }
@@ -184,7 +183,7 @@ public class McuService extends Service implements McuSender {
             this.mSerialPort = null;
         }
         this.mSerialPort = null;
-        Toast.makeText(getApplicationContext(), "Destroyed MCUService", Toast.LENGTH_LONG).show();
+        Toast.makeText(this, "Destroyed MCUService", Toast.LENGTH_LONG).show();
     }
 
     public IBinder onBind(Intent intent) {

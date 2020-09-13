@@ -23,15 +23,15 @@ public class McuCommunicator implements SerialPortDataListener{
     }
 
     private McuCommunicator() throws SerialPortInvalidPortException{
-        try{
-            //serial = SerialPort.getCommPorts()[0];
+        /*try{
+            serial = SerialPort.getCommPorts()[0];
         }
         catch (ArrayIndexOutOfBoundsException e){
             throw new SerialPortInvalidPortException("No serial ports!");
         }
-        //serial.setBaudRate(115200);
-        //serial.addDataListener(this);
-        //serial.openPort();
+        serial.setBaudRate(115200);
+        serial.addDataListener(this);
+        serial.openPort();*/
     }
 
     public static McuCommunicator getInstance() {
@@ -79,8 +79,7 @@ public class McuCommunicator implements SerialPortDataListener{
         catch(Exception e){
             e.printStackTrace();
         }
-        if (handler != null)
-            stopReading();
+        stopReading();
         instance = null;
     }
 
