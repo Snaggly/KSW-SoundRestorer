@@ -40,9 +40,9 @@ public class LogcatReader {
                                 callback.update(line);
                             }
                         }
-                        Log.i("KswMcuListener", "End-Of-Line");
+                        //Log.i("KswMcuListener", "End-Of-Line");
                         try {
-                            Thread.sleep(500);
+                            Thread.sleep(1000);
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                         }

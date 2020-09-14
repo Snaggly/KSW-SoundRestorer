@@ -42,6 +42,10 @@ public class ActivityService extends Service implements McuAction {
 
     @Override
     public void onCreate() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            startMyOwnForeground();
+        }
+
         try{
             if ((McuCommunicator.makeAndGetInstance()).startReading(this) != null)
                 isRunning = true;
@@ -59,10 +63,6 @@ public class ActivityService extends Service implements McuAction {
             Toast.makeText(this, "Failed to set up AudioManager!\nYou'll have to manually unpause music when switching.", Toast.LENGTH_LONG).show();
         }
         Log.d(MainActivity.TAG, "Started Service...");
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            startMyOwnForeground();
-        }
 
         super.onCreate();
     }
@@ -104,10 +104,8 @@ public class ActivityService extends Service implements McuAction {
             if (sm!=null)
                 sm.unpause();
 
-        } else if (McuEvent.SWITCHED_TO_OEM.equals(logcatMessage)){
+        } else if (McuEvent.SWITCHED_TO_ARM.equals(logcatMessage)){
             McuCommunicator.getInstance().sendCommand(McuCommands.SET_TO_MUSIC_SOURCE);
-            if (sm!=null)
-                sm.unpause();
         }
     }
 }
