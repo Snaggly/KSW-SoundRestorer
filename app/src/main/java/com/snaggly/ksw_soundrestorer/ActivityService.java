@@ -17,7 +17,6 @@ import androidx.core.app.NotificationCompat;
 
 public class ActivityService extends Service implements McuAction {
     public static boolean isRunning = false;
-    private SoundManager sm;
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     private void startMyOwnForeground(){
@@ -55,13 +54,6 @@ public class ActivityService extends Service implements McuAction {
             Toast.makeText(this, "Failed to set up Serial connection to MCU!", Toast.LENGTH_LONG).show();
             stopSelf();
         }
-        try {
-            sm = new SoundManager(this);
-            sm.startCheckingThread();
-        }
-        catch (Exception e){
-            Toast.makeText(this, "Failed to set up AudioManager!\nYou'll have to manually unpause music when switching.", Toast.LENGTH_LONG).show();
-        }
         Log.d(MainActivity.TAG, "Started Service...");
 
         super.onCreate();
@@ -72,9 +64,6 @@ public class ActivityService extends Service implements McuAction {
         super.onDestroy();
         if (McuCommunicator.getInstance()!=null)
             McuCommunicator.getInstance().killCommunicator();
-        if (sm != null){
-            sm.stopCheckingThread();
-        }
         Log.d(MainActivity.TAG, "Stopped Service...");
         isRunning = false;
     }
@@ -99,13 +88,7 @@ public class ActivityService extends Service implements McuAction {
         if (TestActivity.instance != null)
             TestActivity.instance.addNewItemToList(logcatMessage);
 
-        if (McuEvent.SWITCHED_TO_OEM.equals(logcatMessage)){
+        if (McuEvent.SWITCHED_TO_OEM.equals(logcatMessage) || McuEvent.SWITCHED_TO_ARM.equals(logcatMessage))
             McuCommunicator.getInstance().sendCommand(McuCommands.SET_TO_ATSL_AIRCONSOLE);
-            if (sm!=null)
-                sm.unpause();
-
-        } else if (McuEvent.SWITCHED_TO_ARM.equals(logcatMessage)){
-            McuCommunicator.getInstance().sendCommand(McuCommands.SET_TO_MUSIC_SOURCE);
-        }
     }
 }
