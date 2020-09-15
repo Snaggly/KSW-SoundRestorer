@@ -29,13 +29,13 @@ public class MainActivity extends AppCompatActivity {
             startActivityForResult(new Intent("android.settings.action.MANAGE_OVERLAY_PERMISSION", Uri.parse("package:" + getPackageName())), 5469);
         }
 
-        if(!checkPermission() /*&& !attemptRoot()*/){
+        else if(!checkPermission() && !attemptRoot()){
             AlertDialog.Builder dlgAlert  = new AlertDialog.Builder(this);
             dlgAlert.setMessage("Failed to get permissions!\nIf your device is not rooted, manually permit READ_LOGS permission via adb!");
             dlgAlert.setTitle(TAG);
             dlgAlert.setPositiveButton("OK", null);
             dlgAlert.setCancelable(true);
-            dlgAlert.setPositiveButton("Ok", (dialog, which) -> { startTest(); });
+            dlgAlert.setPositiveButton("Ok", (dialog, which) -> startTest());
             dlgAlert.create().show();
         }
         else startTest();
@@ -46,7 +46,7 @@ public class MainActivity extends AppCompatActivity {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 startService(new Intent(this, ActivityService.class));
             }
-            //startActivity(new Intent(this, TestActivity.class));
+            startActivity(new Intent(this, TestActivity.class));
             Intent testingActivity = new Intent();
             testingActivity.setComponent(new ComponentName(BuildConfig.APPLICATION_ID, TestActivity.class.getName()));
             testingActivity.setFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION | Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);

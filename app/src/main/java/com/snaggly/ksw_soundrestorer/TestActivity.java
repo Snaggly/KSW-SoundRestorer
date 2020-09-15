@@ -1,11 +1,15 @@
 package com.snaggly.ksw_soundrestorer;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.SwitchCompat;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
 import android.widget.ArrayAdapter;
+import android.widget.CompoundButton;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -15,7 +19,6 @@ import com.google.android.material.textfield.TextInputLayout;
 import java.util.ArrayList;
 
 public class TestActivity extends AppCompatActivity {
-
     private ListView listMcu;
     private ArrayAdapter<String> mcuEventAdapter;
     private ArrayList<String> mcuEvents = new ArrayList<String>();
@@ -30,6 +33,11 @@ public class TestActivity extends AppCompatActivity {
         setContentView(R.layout.activity_test);
 
         instance = this;
+
+        SwitchCompat startOnBootSwitch = findViewById(R.id.startOnBootSw);
+        startOnBootSwitch.setChecked(Preferences.GET_START_ON_BOOT(this));
+        startOnBootSwitch.setOnCheckedChangeListener((compoundButton, b) -> Preferences.SET_START_ON_BOOT(b, this));
+
         TextView runningLabel = findViewById(R.id.isServiceRunningText);
         if (!ActivityService.isRunning)
             runningLabel.setText(R.string.service_stopped);

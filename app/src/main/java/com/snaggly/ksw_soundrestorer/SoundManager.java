@@ -27,6 +27,11 @@ public class SoundManager {
         }
     }
 
+    public void forceunpause(){
+        am.dispatchMediaKeyEvent(pauseEvent);
+        am.dispatchMediaKeyEvent(playEvent);
+    }
+
     public void startCheckingThread(){
         inLoop = true;
         checkerThread.start();

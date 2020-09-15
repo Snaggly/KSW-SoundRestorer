@@ -42,7 +42,7 @@ public class LogcatReader {
                         }
                         //Log.i("KswMcuListener", "End-Of-Line");
                         try {
-                            Thread.sleep(1000);
+                            Thread.sleep(100);
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                         }

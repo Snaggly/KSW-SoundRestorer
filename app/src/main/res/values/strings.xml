@@ -8,4 +8,5 @@
     <string name="send_command">Send Command</string>
     <string name="bytes">Bytes:</string>
     <string name="intercept_interval">Intercept Interval: </string>
+    <string name="start_service_on_boot">Start Service on Boot</string>
 </resources>

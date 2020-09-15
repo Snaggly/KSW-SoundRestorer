@@ -13,15 +13,17 @@ public class BootReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         if (Intent.ACTION_BOOT_COMPLETED.equals(intent.getAction())){
-            McuCommunicator.makeAndGetInstance().sendCommand(McuCommands.SET_TO_MUSIC_SOURCE);
+            McuCommunicator.makeAndGetInstance().sendCommand(McuCommands.SET_TO_ATSL_AIRCONSOLE);
 
-            try {
-                Intent testingActivity = context.getPackageManager().getLaunchIntentForPackage(BuildConfig.APPLICATION_ID);
-                testingActivity.setFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION | Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
-                context.startActivity(testingActivity);
-            }
-            catch (Exception e){
-                Toast.makeText(context, "TestActivity could not be started.\n" + e.getMessage(), Toast.LENGTH_LONG).show();
+            if (Preferences.GET_START_ON_BOOT(context)){
+                try {
+                    Intent testingActivity = context.getPackageManager().getLaunchIntentForPackage(BuildConfig.APPLICATION_ID);
+                    testingActivity.setFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION | Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
+                    context.startActivity(testingActivity);
+                }
+                catch (Exception e){
+                    Toast.makeText(context, "TestActivity could not be started.\n" + e.getMessage(), Toast.LENGTH_LONG).show();
+                }
             }
         }
     }
