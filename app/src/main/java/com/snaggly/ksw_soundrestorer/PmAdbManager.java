@@ -1,7 +1,5 @@
 package com.snaggly.ksw_soundrestorer;
 
-import android.util.Log;
-
 import com.cgutman.adblib.AdbBase64;
 import com.cgutman.adblib.AdbConnection;
 import com.cgutman.adblib.AdbCrypto;
@@ -11,8 +9,11 @@ import org.apache.commons.codec.binary.Base64;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.security.NoSuchAlgorithmException;
+import java.util.Timer;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class PmAdbManager {
     public static AdbBase64 getBase64Impl() {
@@ -42,14 +43,31 @@ public class PmAdbManager {
         return c;
     }
 
-    public static void tryGrantingPermissionOverAdb(File fileDir, String pm) throws IOException, NoSuchAlgorithmException, InterruptedException {
-        AdbCrypto adbCrypto = setupCrypto(fileDir, "public.key", "private.key");
-        Socket socket = new Socket ("127.0.0.1", 5555);
-        AdbConnection adbConnection = AdbConnection.create(socket, adbCrypto);
-        adbConnection.connect();
+    public static void tryGrantingPermissionOverAdb(File fileDir, String pm) throws Exception {
+        AtomicReference<Exception> outerexception = new AtomicReference<>();
+        Thread thread = new Thread(() -> {
+            try{
+                AdbCrypto adbCrypto = setupCrypto(fileDir, "public.key", "private.key");
+                Socket socket = new Socket ();
+                socket.connect(new InetSocketAddress("localhost", 5555), 5000);
+                AdbConnection adbConnection = AdbConnection.create(socket, adbCrypto);
+                adbConnection.connect();
 
-        AdbStream shellStream = adbConnection.open("shell:");
-        shellStream.write("pm grant " + BuildConfig.APPLICATION_ID + " android.permission." + pm);
-        shellStream.close();
+                AdbStream shellStream = adbConnection.open("shell:");
+                shellStream.write("pm grant " + BuildConfig.APPLICATION_ID + " " + pm + "\n");
+                shellStream.close();
+                adbConnection.close();
+                socket.close();
+            }
+            catch (Exception innerException){
+                outerexception.set(innerException);
+            }
+        });
+
+        thread.start();
+        thread.join();
+
+        if (outerexception.get() != null)
+            throw outerexception.get();
     }
 }

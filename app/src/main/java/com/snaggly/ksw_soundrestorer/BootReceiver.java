@@ -18,6 +18,7 @@ public class BootReceiver extends BroadcastReceiver {
             if (Preferences.GET_START_ON_BOOT(context)){
                 try {
                     Intent testingActivity = context.getPackageManager().getLaunchIntentForPackage(BuildConfig.APPLICATION_ID);
+                    testingActivity.putExtra("startService", true);
                     testingActivity.setFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION | Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
                     context.startActivity(testingActivity);
                 }

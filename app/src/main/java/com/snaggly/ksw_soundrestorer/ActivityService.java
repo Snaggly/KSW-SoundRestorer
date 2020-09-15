@@ -50,7 +50,7 @@ public class ActivityService extends Service implements McuAction {
         try{
             if ((McuCommunicator.makeAndGetInstance()).startReading(this) != null)
                 isRunning = true;
-            McuCommunicator.getInstance().sendCommand(McuCommands.SET_TO_MUSIC_SOURCE);
+            McuCommunicator.getInstance().sendCommand(McuCommands.SET_TO_ATSL_AIRCONSOLE);
         }
         catch (Exception e){
             Toast.makeText(this, "Failed to set up Serial connection to MCU!", Toast.LENGTH_LONG).show();
@@ -102,7 +102,7 @@ public class ActivityService extends Service implements McuAction {
 
         if (McuEvent.SWITCHED_TO_OEM.equals(logcatMessage)){
             try {
-                Thread.sleep(2000);
+                Thread.sleep(1500);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
@@ -117,7 +117,7 @@ public class ActivityService extends Service implements McuAction {
                 e.printStackTrace();
             }
             McuCommunicator.getInstance().sendCommand(McuCommands.SET_TO_ATSL_AIRCONSOLE);
-            if (hasPaused){
+            if (hasPaused && !sm.getCurrentPlayingState()){
                 sm.forceunpause();
                 hasPaused = false;
             }

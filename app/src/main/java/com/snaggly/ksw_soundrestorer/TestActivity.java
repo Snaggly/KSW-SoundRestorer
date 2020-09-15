@@ -44,7 +44,7 @@ public class TestActivity extends AppCompatActivity {
         textCmd = findViewById(R.id.texfieldCmd);
         textBytes = findViewById(R.id.texfieldBytes);
         textCmd.getEditText().setText("103");
-        textBytes.getEditText().setText("1");
+        textBytes.getEditText().setText("13");
         activityService = new Intent(this, ActivityService.class);
 
         listMcu = findViewById(R.id.mcuListView);

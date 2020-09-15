@@ -67,6 +67,7 @@ public class McuCommunicator implements SerialPortDataListener{
     public void killCommunicator(){
         try{
             serial.removeDataListener();
+            serial.closePort();
         }
         catch(Exception e){
             e.printStackTrace();

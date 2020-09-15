@@ -24,21 +24,45 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         if (Build.VERSION.SDK_INT >= 23 && !Settings.canDrawOverlays(this)) {
             startActivityForResult(new Intent("android.settings.action.MANAGE_OVERLAY_PERMISSION", Uri.parse("package:" + getPackageName())), 5469);
         }
+        else if(!checkPermission()){
+            try {
+                attemptAdb();
+            }
+            catch (Exception e){
+                AlertDialog.Builder dlgAlert  = new AlertDialog.Builder(this);
+                dlgAlert.setMessage("Failed to get permissions!" + e.getClass().getName() + " \n " + e.getMessage() + "\n You will have to manually grant READ_LOGS permission to this app!");
+                dlgAlert.setTitle(TAG);
+                dlgAlert.setPositiveButton("OK", null);
+                dlgAlert.setCancelable(true);
+                dlgAlert.setPositiveButton("Ok", (dialog, which) -> finish());
+                dlgAlert.create().show();
+            }
+            Toast.makeText(this, "Acquired READ_LOGS permission..", Toast.LENGTH_SHORT);
+            finish();
+        } else if (getIntent().getExtras() != null && getIntent().getExtras().getBoolean("startService"))
+            startService();
+        else
+            startTest();
+    }
 
-        else if(!checkPermission() && !attemptAdb()){
-            AlertDialog.Builder dlgAlert  = new AlertDialog.Builder(this);
-            dlgAlert.setMessage("Failed to get permissions!\nYou will have to manually grant READ_LOGS permission to this app!");
-            dlgAlert.setTitle(TAG);
-            dlgAlert.setPositiveButton("OK", null);
-            dlgAlert.setCancelable(true);
-            dlgAlert.setPositiveButton("Ok", (dialog, which) -> startTest());
-            dlgAlert.create().show();
+    private void startService(){
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            startService(new Intent(this, ActivityService.class));
         }
-        else startTest();
+
+        try {
+            Thread.sleep(100);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        Intent home = new Intent(Intent.ACTION_MAIN);
+        home.addCategory(Intent.CATEGORY_HOME);
+        home.setFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION | Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
+        this.startActivity(home);
     }
 
     private void startTest(){
@@ -47,17 +71,6 @@ public class MainActivity extends AppCompatActivity {
                 startService(new Intent(this, ActivityService.class));
             }
             startActivity(new Intent(this, TestActivity.class));
-            Intent testingActivity = new Intent();
-            testingActivity.setComponent(new ComponentName(BuildConfig.APPLICATION_ID, TestActivity.class.getName()));
-            testingActivity.setFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION | Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
-            this.startActivity(testingActivity);
-
-            Thread.sleep(600);
-
-            Intent home = new Intent(Intent.ACTION_MAIN);
-            home.addCategory(Intent.CATEGORY_HOME);
-            home.setFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION | Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
-            this.startActivity(home);
         }
         catch(Exception e){
             Toast.makeText(this, e.getMessage(), Toast.LENGTH_LONG).show();
@@ -68,13 +81,8 @@ public class MainActivity extends AppCompatActivity {
         return this.checkPermission(reqPermission, Process.myPid(), Process.myUid()) == PackageManager.PERMISSION_GRANTED;
     }
 
-    public boolean attemptAdb() {
-        try {
-            PmAdbManager.tryGrantingPermissionOverAdb(getFilesDir(), "READ_LOGS");
-            return checkPermission();
-        } catch (Exception e) {
-            Toast.makeText(this, e.getMessage(), Toast.LENGTH_LONG);
-            return false;
-        }
+    public boolean attemptAdb() throws Exception {
+        PmAdbManager.tryGrantingPermissionOverAdb(getFilesDir(), reqPermission);
+        return checkPermission();
     }
 }

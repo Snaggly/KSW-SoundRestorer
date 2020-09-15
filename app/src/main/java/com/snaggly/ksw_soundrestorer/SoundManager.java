@@ -20,6 +20,10 @@ public class SoundManager {
         checkerThread = new CheckIfMusicPlayingThread();
     }
 
+    public boolean getCurrentPlayingState(){
+        return am.isMusicActive();
+    }
+
     public void unpause(){
         if (isMusicPlaying){
             am.dispatchMediaKeyEvent(pauseEvent);

@@ -22,7 +22,7 @@ public class LogcatReader {
             return;
         readerThread = new Thread(() -> {
             try {
-                Runtime.getRuntime().exec("logcat -c");
+                Runtime.getRuntime().exec("logcat -c\n");
                 logProc = Runtime.getRuntime().exec("logcat KswMcuListener:I *:S");
                 isReading = true;
             } catch (IOException e) {
@@ -40,9 +40,8 @@ public class LogcatReader {
                                 callback.update(line);
                             }
                         }
-                        //Log.i("KswMcuListener", "End-Of-Line");
                         try {
-                            Thread.sleep(100);
+                            Thread.sleep(250);
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                         }
