@@ -29,9 +29,9 @@ public class MainActivity extends AppCompatActivity {
             startActivityForResult(new Intent("android.settings.action.MANAGE_OVERLAY_PERMISSION", Uri.parse("package:" + getPackageName())), 5469);
         }
 
-        else if(!checkPermission() && !attemptRoot()){
+        else if(!checkPermission() && !attemptAdb()){
             AlertDialog.Builder dlgAlert  = new AlertDialog.Builder(this);
-            dlgAlert.setMessage("Failed to get permissions!\nIf your device is not rooted, manually permit READ_LOGS permission via adb!");
+            dlgAlert.setMessage("Failed to get permissions!\nYou will have to manually grant READ_LOGS permission to this app!");
             dlgAlert.setTitle(TAG);
             dlgAlert.setPositiveButton("OK", null);
             dlgAlert.setCancelable(true);
@@ -68,17 +68,12 @@ public class MainActivity extends AppCompatActivity {
         return this.checkPermission(reqPermission, Process.myPid(), Process.myUid()) == PackageManager.PERMISSION_GRANTED;
     }
 
-    public boolean attemptRoot() {
+    public boolean attemptAdb() {
         try {
-            java.lang.Process su = Runtime.getRuntime().exec("su");
-            DataOutputStream dosSU = new DataOutputStream(su.getOutputStream());
-            dosSU.writeBytes("pm grant " + BuildConfig.APPLICATION_ID + " android.permission.READ_LOGS\n");
-            dosSU.flush();
-            dosSU.writeBytes("exit\n");
-            dosSU.close();
-            su.waitFor();
+            PmAdbManager.tryGrantingPermissionOverAdb(getFilesDir(), "READ_LOGS");
             return checkPermission();
-        } catch (IOException | InterruptedException e) {
+        } catch (Exception e) {
+            Toast.makeText(this, e.getMessage(), Toast.LENGTH_LONG);
             return false;
         }
     }
