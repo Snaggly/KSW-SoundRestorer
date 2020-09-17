@@ -1,7 +1,5 @@
 package com.snaggly.ksw_soundrestorer;
 
-import java.io.IOException;
-
 import com.fazecast.jSerialComm.SerialPort;
 import com.fazecast.jSerialComm.SerialPortDataListener;
 import com.fazecast.jSerialComm.SerialPortEvent;
@@ -18,7 +16,7 @@ public class McuCommunicator implements SerialPortDataListener{
         try{
             serial = SerialPort.getCommPorts()[0];
         }
-        catch (ArrayIndexOutOfBoundsException e){
+        catch (Exception e){
             throw new SerialPortInvalidPortException("No serial ports!");
         }
         serial.setBaudRate(115200);
@@ -27,6 +25,9 @@ public class McuCommunicator implements SerialPortDataListener{
     }
 
     public static McuCommunicator getInstance() {
+        if (instance == null)
+            instance = new McuCommunicator();
+
         return instance;
     }
 
@@ -44,13 +45,6 @@ public class McuCommunicator implements SerialPortDataListener{
             readerThread.stopReading();
         }
         return this;
-    }
-
-    public static McuCommunicator makeAndGetInstance() throws SerialPortInvalidPortException {
-        if (instance == null)
-            instance = new McuCommunicator();
-
-        return instance;
     }
 
     public void sendCommand(int cmdType, byte[] data, boolean update) throws SerialPortInvalidPortException {

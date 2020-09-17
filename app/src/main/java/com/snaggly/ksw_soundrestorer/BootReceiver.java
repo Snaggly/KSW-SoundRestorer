@@ -1,19 +1,22 @@
 package com.snaggly.ksw_soundrestorer;
 
 import android.content.BroadcastReceiver;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
-import android.os.Build;
-import android.util.Log;
 import android.widget.Toast;
+
+import java.io.IOException;
 
 public class BootReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
         if (Intent.ACTION_BOOT_COMPLETED.equals(intent.getAction())){
-            McuCommunicator.makeAndGetInstance().sendCommand(McuCommands.SET_TO_ATSL_AIRCONSOLE);
+            try {
+                McuCommunicator.getInstance().sendCommand(McuCommands.SET_TO_ATSL_AIRCONSOLE);
+            } catch (Exception e) {
+                Toast.makeText(context, "BootReceiver\nFailed to send command", Toast.LENGTH_LONG);
+            }
 
             if (Preferences.GET_START_ON_BOOT(context)){
                 try {

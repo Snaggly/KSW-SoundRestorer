@@ -15,6 +15,8 @@ import android.widget.Toast;
 import androidx.annotation.RequiresApi;
 import androidx.core.app.NotificationCompat;
 
+import java.io.IOException;
+
 public class ActivityService extends Service implements McuAction {
     public static boolean isRunning = false;
     private SoundManager sm;
@@ -43,12 +45,12 @@ public class ActivityService extends Service implements McuAction {
 
     @Override
     public void onCreate() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+        /*if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             startMyOwnForeground();
-        }
+        }*/
 
         try{
-            if ((McuCommunicator.makeAndGetInstance()).startReading(this) != null)
+            if ((McuCommunicator.getInstance()).startReading(this) != null)
                 isRunning = true;
             McuCommunicator.getInstance().sendCommand(McuCommands.SET_TO_ATSL_AIRCONSOLE);
         }

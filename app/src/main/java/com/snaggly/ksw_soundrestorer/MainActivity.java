@@ -1,10 +1,8 @@
 package com.snaggly.ksw_soundrestorer;
 
-import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.AlertDialog;
-import android.content.ComponentName;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
@@ -14,7 +12,6 @@ import android.os.Process;
 import android.provider.Settings;
 import android.widget.Toast;
 
-import java.io.DataOutputStream;
 import java.io.IOException;
 
 public class MainActivity extends AppCompatActivity {
@@ -24,24 +21,28 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        try {
+            McuCommunicator.getInstance().sendCommand(McuCommands.SET_TO_ATSL_AIRCONSOLE);
+        } catch (Exception e) {
+            Toast.makeText(this, "MainActivity\nFailed to send command\n" + e.getMessage(), Toast.LENGTH_LONG);
+        }
         if (Build.VERSION.SDK_INT >= 23 && !Settings.canDrawOverlays(this)) {
             startActivityForResult(new Intent("android.settings.action.MANAGE_OVERLAY_PERMISSION", Uri.parse("package:" + getPackageName())), 5469);
         }
         else if(!checkPermission()){
-            try {
-                attemptAdb();
-            }
-            catch (Exception e){
+            if (!attemptAdb()){
                 AlertDialog.Builder dlgAlert  = new AlertDialog.Builder(this);
-                dlgAlert.setMessage("Failed to get permissions!" + e.getClass().getName() + " \n " + e.getMessage() + "\n You will have to manually grant READ_LOGS permission to this app!");
+                dlgAlert.setMessage("Failed to get permissions!\nYou will have to manually grant READ_LOGS permission to this app!");
                 dlgAlert.setTitle(TAG);
                 dlgAlert.setPositiveButton("OK", null);
                 dlgAlert.setCancelable(true);
                 dlgAlert.setPositiveButton("Ok", (dialog, which) -> finish());
                 dlgAlert.create().show();
             }
-            Toast.makeText(this, "Acquired READ_LOGS permission..", Toast.LENGTH_SHORT);
-            finish();
+            else {
+                Toast.makeText(this, "Acquired READ_LOGS permission..", Toast.LENGTH_SHORT);
+                finish();
+            }
         } else if (getIntent().getExtras() != null && getIntent().getExtras().getBoolean("startService"))
             startService();
         else
@@ -81,8 +82,13 @@ public class MainActivity extends AppCompatActivity {
         return this.checkPermission(reqPermission, Process.myPid(), Process.myUid()) == PackageManager.PERMISSION_GRANTED;
     }
 
-    public boolean attemptAdb() throws Exception {
-        PmAdbManager.tryGrantingPermissionOverAdb(getFilesDir(), reqPermission);
-        return checkPermission();
+    public boolean attemptAdb() {
+        try {
+            PmAdbManager.tryGrantingPermissionOverAdb(getFilesDir(), reqPermission);
+            return true;
+        }
+        catch (Exception e) {
+            return false;
+        }
     }
 }

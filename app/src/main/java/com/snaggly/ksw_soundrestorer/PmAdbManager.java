@@ -12,7 +12,6 @@ import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.security.NoSuchAlgorithmException;
-import java.util.Timer;
 import java.util.concurrent.atomic.AtomicReference;
 
 public class PmAdbManager {

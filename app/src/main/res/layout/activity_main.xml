@@ -5,13 +5,4 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".MainActivity">
-
-    <Button
-        android:id="@+id/button"
-        android:layout_width="588dp"
-        android:layout_height="228dp"
-        android:text="Click to test"
-        android:textSize="24sp"
-        tools:layout_editor_absoluteX="71dp"
-        tools:layout_editor_absoluteY="91dp" />
 </androidx.constraintlayout.widget.ConstraintLayout>
