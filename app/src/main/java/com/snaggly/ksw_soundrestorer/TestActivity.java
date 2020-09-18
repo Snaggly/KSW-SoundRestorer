@@ -53,7 +53,7 @@ public class TestActivity extends AppCompatActivity {
 
         findViewById(R.id.serviceStartButton).setOnClickListener(view -> {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                startService(activityService);
+                startForegroundService(activityService);
             }
             Toast.makeText(view.getContext(), "Service starting...", Toast.LENGTH_SHORT).show();
             runningLabel.setText(R.string.service_running);

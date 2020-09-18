@@ -15,7 +15,7 @@ import android.widget.Toast;
 import androidx.annotation.RequiresApi;
 import androidx.core.app.NotificationCompat;
 
-import java.io.IOException;
+import com.fazecast.jSerialComm.SerialPortInvalidPortException;
 
 public class ActivityService extends Service implements McuAction {
     public static boolean isRunning = false;
@@ -45,16 +45,16 @@ public class ActivityService extends Service implements McuAction {
 
     @Override
     public void onCreate() {
-        /*if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             startMyOwnForeground();
-        }*/
+        }
 
         try{
             if ((McuCommunicator.getInstance()).startReading(this) != null)
                 isRunning = true;
             McuCommunicator.getInstance().sendCommand(McuCommands.SET_TO_ATSL_AIRCONSOLE);
         }
-        catch (Exception e){
+        catch (SerialPortInvalidPortException e){
             Toast.makeText(this, "Failed to set up Serial connection to MCU!", Toast.LENGTH_LONG).show();
             stopSelf();
         }

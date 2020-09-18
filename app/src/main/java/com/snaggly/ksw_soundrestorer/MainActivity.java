@@ -51,7 +51,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void startService(){
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            startService(new Intent(this, ActivityService.class));
+            startForegroundService(new Intent(this, ActivityService.class));
         }
 
         try {
@@ -69,7 +69,7 @@ public class MainActivity extends AppCompatActivity {
     private void startTest(){
         try{
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                startService(new Intent(this, ActivityService.class));
+                startForegroundService(new Intent(this, ActivityService.class));
             }
             startActivity(new Intent(this, TestActivity.class));
         }
