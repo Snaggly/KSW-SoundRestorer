@@ -15,11 +15,50 @@ import java.security.NoSuchAlgorithmException;
 import java.util.concurrent.atomic.AtomicReference;
 
 public class PmAdbManager {
+    private static PmAdbManager instance;
+    private AdbCrypto adbCrypto;
+    private Socket socket;
+    private AdbConnection adbConnection;
+    private AdbStream shellStream;
+    private boolean isConnected = false;
+
+    public static PmAdbManager initInstance(File fileDir) throws InterruptedException, NoSuchAlgorithmException, IOException {
+        if (instance!=null){
+            instance.disconnect();
+        }
+        instance = new PmAdbManager(fileDir);
+        return instance;
+    }
+
+    public static PmAdbManager getInstance() throws InterruptedException, NoSuchAlgorithmException, IOException {
+        return instance;
+    }
+
+    private PmAdbManager(File fileDir) throws IOException, NoSuchAlgorithmException, InterruptedException {
+        adbCrypto = setupCrypto(fileDir, "public.key", "private.key");
+        socket = new Socket();
+        connect();
+    }
+
+    private void connect() throws IOException, InterruptedException {
+        socket.connect(new InetSocketAddress("localhost", 5555), 5000);
+        adbConnection = AdbConnection.create(socket, adbCrypto);
+        adbConnection.connect();
+        shellStream = adbConnection.open("shell:");
+    }
+
+    public void disconnect() throws IOException {
+        shellStream.close();
+        adbConnection.close();
+        socket.close();
+        instance = null;
+    }
+
     public static AdbBase64 getBase64Impl() {
         return data -> Base64.encodeBase64String(data);
     }
 
-    private static AdbCrypto setupCrypto(File fileDir, String pubKeyFile, String privKeyFile) throws NoSuchAlgorithmException, IOException {
+    private AdbCrypto setupCrypto(File fileDir, String pubKeyFile, String privKeyFile) throws NoSuchAlgorithmException, IOException {
         File publicKey = new File(fileDir, pubKeyFile);
         File privateKey = new File(fileDir, privKeyFile);
         AdbCrypto c = null;
@@ -42,21 +81,23 @@ public class PmAdbManager {
         return c;
     }
 
-    public static void tryGrantingPermissionOverAdb(File fileDir, String pm) throws Exception {
+    public void executeCmd(String cmd) throws IOException, InterruptedException {
+        shellStream.write(cmd + "\n");
+    }
+
+    public void executeShellCmds(String[] cmds) throws Exception{
+        for (String cmd : cmds){
+            shellStream.write(cmd + "\n");
+        }
+    }
+
+    public void tryGrantingPermissionOverAdb(String pm) throws Exception {
         AtomicReference<Exception> outerexception = new AtomicReference<>();
         Thread thread = new Thread(() -> {
             try{
-                AdbCrypto adbCrypto = setupCrypto(fileDir, "public.key", "private.key");
-                Socket socket = new Socket ();
-                socket.connect(new InetSocketAddress("localhost", 5555), 5000);
-                AdbConnection adbConnection = AdbConnection.create(socket, adbCrypto);
-                adbConnection.connect();
-
                 AdbStream shellStream = adbConnection.open("shell:");
                 shellStream.write("pm grant " + BuildConfig.APPLICATION_ID + " " + pm + "\n");
                 shellStream.close();
-                adbConnection.close();
-                socket.close();
             }
             catch (Exception innerException){
                 outerexception.set(innerException);

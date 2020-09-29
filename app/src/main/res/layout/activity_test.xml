@@ -24,8 +24,8 @@
         android:layout_marginStart="36dp"
         android:layout_marginTop="148dp"
         android:textColorHint="#FFFFFF"
-        android:enabled="false"
-        android:visibility="gone"
+        android:enabled="true"
+        android:visibility="visible"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
@@ -38,8 +38,8 @@
             android:textColorHighlight="#A0A0A0"
             android:textColorHint="#FDD2D2"
             android:textColorLink="#FFFFFF"
-            android:enabled="false"
-            android:visibility="gone"
+            android:enabled="true"
+            android:visibility="visible"
             tools:layout_editor_absoluteX="36dp"
             tools:layout_editor_absoluteY="161dp" />
     </com.google.android.material.textfield.TextInputLayout>
@@ -51,8 +51,8 @@
         android:layout_marginStart="76dp"
         android:layout_marginTop="4dp"
         android:text="@string/send_command"
-        android:enabled="false"
-        android:visibility="gone"
+        android:enabled="true"
+        android:visibility="visible"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/texfieldCmd" />
 
@@ -75,8 +75,8 @@
         android:layout_marginStart="36dp"
         android:layout_marginTop="196dp"
         android:textColorHint="#FFFFFF"
-        android:enabled="false"
-        android:visibility="gone"
+        android:enabled="true"
+        android:visibility="visible"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 

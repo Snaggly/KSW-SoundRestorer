@@ -3,6 +3,7 @@ package com.snaggly.ksw_soundrestorer;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
@@ -12,7 +13,7 @@ import android.os.Process;
 import android.provider.Settings;
 import android.widget.Toast;
 
-import java.io.IOException;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class MainActivity extends AppCompatActivity {
     final public static String TAG = "KSW-SoundRestorer";
@@ -21,11 +22,28 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        /*if (!isHiddenApiActivated(this)){
+            if(!allowHiddenApi()){
+                AlertDialog.Builder dlgAlert  = new AlertDialog.Builder(this);
+                dlgAlert.setMessage("Failed to get HiddenAPI!");
+                dlgAlert.setTitle(TAG);
+                dlgAlert.setPositiveButton("OK", null);
+                dlgAlert.setCancelable(true);
+                dlgAlert.setPositiveButton("Ok", (dialog, which) -> finish());
+                dlgAlert.create().show();
+            }
+            else {
+                finish();
+            }
+        }*/
+
         try {
             McuCommunicator.getInstance().sendCommand(McuCommands.SET_TO_ATSL_AIRCONSOLE);
         } catch (Exception e) {
             Toast.makeText(this, "MainActivity\nFailed to send command\n" + e.getMessage(), Toast.LENGTH_LONG);
         }
+
         if (Build.VERSION.SDK_INT >= 23 && !Settings.canDrawOverlays(this)) {
             startActivityForResult(new Intent("android.settings.action.MANAGE_OVERLAY_PERMISSION", Uri.parse("package:" + getPackageName())), 5469);
         }
@@ -83,12 +101,52 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public boolean attemptAdb() {
+        AtomicBoolean result = new AtomicBoolean(false);
+        Thread netTh = new Thread(() -> {
+            try {
+                PmAdbManager selfAdb = PmAdbManager.initInstance(getFilesDir());
+                selfAdb.tryGrantingPermissionOverAdb(reqPermission);
+                selfAdb.disconnect();
+            }
+            catch (Exception ie) {
+                result.set(false);
+            }
+        });
+        netTh.start();
         try {
-            PmAdbManager.tryGrantingPermissionOverAdb(getFilesDir(), reqPermission);
-            return true;
+            netTh.join();
+        } catch (InterruptedException e) {
+            result.set(false);
         }
-        catch (Exception e) {
-            return false;
+
+        result.set(true);
+        return result.get();
+    }
+
+    public boolean allowHiddenApi() {
+        AtomicBoolean result = new AtomicBoolean(false);
+        Thread netTh = new Thread(() -> {
+            try {
+                PmAdbManager selfAdb = PmAdbManager.initInstance(getFilesDir());
+                selfAdb.executeCmd("settings put global hidden_api_policy 1");
+                selfAdb.disconnect();
+                result.set(true);
+            }
+            catch (Exception ie) {
+                result.set(false);
+            }
+        });
+        netTh.start();
+        try {
+            netTh.join();
+        } catch (InterruptedException e) {
+            result.set(false);
         }
+
+        return result.get();
+    }
+
+    public static boolean isHiddenApiActivated(Context context) {
+        return Settings.Global.getInt(context.getContentResolver(), "hidden_api_policy", 0) == 1;
     }
 }

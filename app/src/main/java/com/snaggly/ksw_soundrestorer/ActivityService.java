@@ -17,6 +17,8 @@ import androidx.core.app.NotificationCompat;
 
 import com.fazecast.jSerialComm.SerialPortInvalidPortException;
 
+import java.io.IOException;
+
 public class ActivityService extends Service implements McuAction {
     public static boolean isRunning = false;
     private SoundManager sm;
@@ -54,7 +56,7 @@ public class ActivityService extends Service implements McuAction {
                 isRunning = true;
             McuCommunicator.getInstance().sendCommand(McuCommands.SET_TO_ATSL_AIRCONSOLE);
         }
-        catch (SerialPortInvalidPortException e){
+        catch (Exception e){
             Toast.makeText(this, "Failed to set up Serial connection to MCU!", Toast.LENGTH_LONG).show();
             stopSelf();
         }
@@ -108,7 +110,11 @@ public class ActivityService extends Service implements McuAction {
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-            McuCommunicator.getInstance().sendCommand(McuCommands.SET_TO_ATSL_AIRCONSOLE);
+            try {
+                McuCommunicator.getInstance().sendCommand(McuCommands.SET_TO_ATSL_AIRCONSOLE);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
             sm.unpause();
             hasPaused = true;
         }
@@ -118,7 +124,11 @@ public class ActivityService extends Service implements McuAction {
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-            McuCommunicator.getInstance().sendCommand(McuCommands.SET_TO_ATSL_AIRCONSOLE);
+            try {
+                McuCommunicator.getInstance().sendCommand(McuCommands.SET_TO_ATSL_AIRCONSOLE);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
             if (hasPaused && !sm.getCurrentPlayingState()){
                 sm.forceunpause();
                 hasPaused = false;

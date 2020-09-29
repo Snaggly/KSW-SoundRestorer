@@ -3,8 +3,6 @@ package com.snaggly.ksw_soundrestorer;
 import android.content.Context;
 import android.content.SharedPreferences;
 
-import androidx.appcompat.widget.SwitchCompat;
-
 public class Preferences {
     private static Preferences instance;
     private SharedPreferences pref;

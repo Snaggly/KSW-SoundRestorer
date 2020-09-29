@@ -138,6 +138,7 @@
   <com.google.android.ads/>
   <com.google.android.ads.consent/>
   <com.google.android.datatransport/>
+  <com.google.android.games/>
   <com.google.android.gms/>
   <com.google.android.instantapps/>
   <com.google.android.instantapps.thirdpartycompat/>
@@ -153,6 +154,7 @@
   <com.google.ar/>
   <com.google.ar.sceneform/>
   <com.google.ar.sceneform.ux/>
+  <com.google.devtools.ksp/>
   <com.google.firebase/>
   <com.google.gms/>
   <com.google.mlkit/>
