@@ -48,10 +48,10 @@
         android:id="@+id/sendCommandBtn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="76dp"
+        android:layout_marginStart="40dp"
         android:layout_marginTop="4dp"
-        android:text="@string/send_command"
         android:enabled="true"
+        android:text="@string/send_command"
         android:visibility="visible"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/texfieldCmd" />
@@ -124,5 +124,16 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/isServiceRunningText"
         app:title="Start on Boot" />
+
+    <Button
+        android:id="@+id/initMcuSettingsVolume"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="15dp"
+        android:text="Init Mcu Volume"
+        app:layout_constraintStart_toEndOf="@+id/sendCommandBtn"
+        app:layout_constraintTop_toTopOf="@+id/sendCommandBtn"
+        tools:layout_editor_absoluteY="255dp" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

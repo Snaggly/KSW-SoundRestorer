@@ -43,8 +43,8 @@ public class TestActivity extends AppCompatActivity {
             runningLabel.setText(R.string.service_stopped);
         textCmd = findViewById(R.id.texfieldCmd);
         textBytes = findViewById(R.id.texfieldBytes);
-        textCmd.getEditText().setText("103");
-        textBytes.getEditText().setText("13");
+        textCmd.getEditText().setText("105");
+        textBytes.getEditText().setText("18,2");
         activityService = new Intent(this, ActivityService.class);
 
         listMcu = findViewById(R.id.mcuListView);
@@ -84,6 +84,10 @@ public class TestActivity extends AppCompatActivity {
             else {
                 Toast.makeText(view.getContext(), "Service not running.", Toast.LENGTH_SHORT).show();
             }
+        });
+
+        findViewById(R.id.initMcuSettingsVolume).setOnClickListener(view -> {
+            McuVoiceSettingsInit.reinitAllVol();
         });
     }
 

@@ -23,7 +23,12 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        /*if (!isHiddenApiActivated(this)){
+        try {
+            McuCommunicator.getInstance().sendCommand(McuCommands.SET_TO_ATSL_AIRCONSOLE);
+        } catch (Exception e) {
+            Toast.makeText(this, "MainActivity\nFailed to send command\n" + e.getMessage(), Toast.LENGTH_LONG);
+        }
+        if (!isHiddenApiActivated(this)){
             if(!allowHiddenApi()){
                 AlertDialog.Builder dlgAlert  = new AlertDialog.Builder(this);
                 dlgAlert.setMessage("Failed to get HiddenAPI!");
@@ -33,22 +38,9 @@ public class MainActivity extends AppCompatActivity {
                 dlgAlert.setPositiveButton("Ok", (dialog, which) -> finish());
                 dlgAlert.create().show();
             }
-            else {
-                finish();
-            }
-        }*/
-
-        try {
-            McuCommunicator.getInstance().sendCommand(McuCommands.SET_TO_ATSL_AIRCONSOLE);
-        } catch (Exception e) {
-            Toast.makeText(this, "MainActivity\nFailed to send command\n" + e.getMessage(), Toast.LENGTH_LONG);
         }
-
-        if (Build.VERSION.SDK_INT >= 23 && !Settings.canDrawOverlays(this)) {
-            startActivityForResult(new Intent("android.settings.action.MANAGE_OVERLAY_PERMISSION", Uri.parse("package:" + getPackageName())), 5469);
-        }
-        else if(!checkPermission()){
-            if (!attemptAdb()){
+        if (!checkPermission()) {
+            if (!attemptAdb()) {
                 AlertDialog.Builder dlgAlert  = new AlertDialog.Builder(this);
                 dlgAlert.setMessage("Failed to get permissions!\nYou will have to manually grant READ_LOGS permission to this app!");
                 dlgAlert.setTitle(TAG);
@@ -57,11 +49,11 @@ public class MainActivity extends AppCompatActivity {
                 dlgAlert.setPositiveButton("Ok", (dialog, which) -> finish());
                 dlgAlert.create().show();
             }
-            else {
-                Toast.makeText(this, "Acquired READ_LOGS permission..", Toast.LENGTH_SHORT);
-                finish();
-            }
-        } else if (getIntent().getExtras() != null && getIntent().getExtras().getBoolean("startService"))
+        }
+        if (Build.VERSION.SDK_INT >= 23 && !Settings.canDrawOverlays(this)) {
+            startActivityForResult(new Intent("android.settings.action.MANAGE_OVERLAY_PERMISSION", Uri.parse("package:" + getPackageName())), 5469);
+        }
+        else if (getIntent().getExtras() != null && getIntent().getExtras().getBoolean("startService"))
             startService();
         else
             startTest();

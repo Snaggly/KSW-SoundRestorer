@@ -15,8 +15,6 @@ import android.widget.Toast;
 import androidx.annotation.RequiresApi;
 import androidx.core.app.NotificationCompat;
 
-import com.fazecast.jSerialComm.SerialPortInvalidPortException;
-
 import java.io.IOException;
 
 public class ActivityService extends Service implements McuAction {
@@ -49,6 +47,13 @@ public class ActivityService extends Service implements McuAction {
     public void onCreate() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             startMyOwnForeground();
+        }
+
+        try {
+            McuVoiceSettingsInit.reinitAllVol();
+        }
+        catch (Exception e) {
+            e.printStackTrace();
         }
 
         try{
@@ -96,6 +101,37 @@ public class ActivityService extends Service implements McuAction {
             for (byte b = 4; b<data.length-1; b++)
                 dataStr+=Integer.toHexString(b) +" ";
             TestActivity.instance.addNewItemToList("Command: " + cmdType + "\n Data: { " + dataStr +"}");
+        }
+
+        if (McuEvent.SWITCHED_TO_OEM.equals(cmdType, data)){
+            try {
+                Thread.sleep(1500);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            try {
+                McuCommunicator.getInstance().sendCommand(McuCommands.SET_TO_ATSL_AIRCONSOLE);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            sm.unpause();
+            hasPaused = true;
+        }
+        else if (McuEvent.SWITCHED_TO_ARM.equals(cmdType, data)){
+            try {
+                Thread.sleep(1500);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            try {
+                McuCommunicator.getInstance().sendCommand(McuCommands.SET_TO_ATSL_AIRCONSOLE);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            if (hasPaused && !sm.getCurrentPlayingState()){
+                sm.forceunpause();
+                hasPaused = false;
+            }
         }
     }
 
