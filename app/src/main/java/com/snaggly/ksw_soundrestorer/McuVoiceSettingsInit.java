@@ -23,98 +23,60 @@ public class McuVoiceSettingsInit {
     private McuVoiceSettingsInit() throws ClassNotFoundException, NoSuchMethodException {}
 
 
-    public static int getANDROID_MEDIA_VOL() {
+    public static int getWitsCommand(String name) {
         try {
             if (instance==null)
                 instance = new McuVoiceSettingsInit();
 
-            Object object = instance.getSettingsInt.invoke(null, "Android_media_vol");
+            Object object = instance.getSettingsInt.invoke(null, name);
             return (int)object;
         } catch (final Exception e) {
             return -1;
         }
+    }
+
+    public static void setWitsCommand(String name, int value) {
+        try {
+            if (instance==null)
+                instance = new McuVoiceSettingsInit();
+
+            instance.setSettingsInt.invoke(null, name, value);
+        } catch (final Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    public static int getANDROID_MEDIA_VOL() {
+        return getWitsCommand("Android_media_vol");
     }
 
     public static int getANDROID_PHONE_VOL() {
-        try {
-            if (instance==null)
-                instance = new McuVoiceSettingsInit();
-
-            Object object = instance.getSettingsInt.invoke(null, "Android_phone_vol");
-            return (int)object;
-        } catch (final Exception e) {
-            return -1;
-        }
+        return getWitsCommand("Android_phone_vol");
     }
 
     public static int getCAR_PHONE_VOL() {
-        try {
-            if (instance==null)
-                instance = new McuVoiceSettingsInit();
-
-            Object object = instance.getSettingsInt.invoke(null, "Car_phone_vol");
-            return (int)object;
-        } catch (final Exception e) {
-            return -1;
-        }
+        return getWitsCommand("Car_phone_vol");
     }
 
-
-
     public static int getCAR_NAVI_VOL() {
-        try {
-            if (instance==null)
-                instance = new McuVoiceSettingsInit();
-
-            Object object = instance.getSettingsInt.invoke(null, "Car_navi_vol");
-            return (int)object;
-        } catch (final Exception e) {
-            return -1;
-        }
+        return getWitsCommand("Car_navi_vol");
     }
 
     public static void setANDROID_MEDIA_VOL(int value) {
-        try {
-            if (instance==null)
-                instance = new McuVoiceSettingsInit();
-
-            instance.setSettingsInt.invoke(null, "Android_media_vol", value);
-        } catch (final Exception e) {
-            e.printStackTrace();
-        }
+        setWitsCommand("Android_media_vol", value);
     }
 
     public static void setANDROID_PHONE_VOL(int value) {
-        try {
-            if (instance==null)
-                instance = new McuVoiceSettingsInit();
-
-            instance.setSettingsInt.invoke(null, "Android_phone_vol", value);
-        } catch (final Exception e) {
-            e.printStackTrace();
-        }
+        setWitsCommand("Android_phone_vol", value);
     }
 
     public static void setCAR_PHONE_VOL(int value) {
-        try {
-            if (instance==null)
-                instance = new McuVoiceSettingsInit();
-
-            instance.setSettingsInt.invoke(null, "Car_phone_vol", value);
-        } catch (final Exception e) {
-            e.printStackTrace();
-        }
+        setWitsCommand("Car_phone_vol", value);
     }
 
     public static void setCAR_NAVI_VOL(int value) {
-        try {
-            if (instance==null)
-                instance = new McuVoiceSettingsInit();
-
-            instance.setSettingsInt.invoke(null, "Car_navi_vol", value);
-        } catch (final Exception e) {
-            e.printStackTrace();
-        }
+        setWitsCommand("Car_navi_vol", value);
     }
 
     public static void reinitAllVol() {

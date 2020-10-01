@@ -85,7 +85,7 @@ public class PmAdbManager {
         shellStream.write(cmd + "\n");
     }
 
-    public void executeShellCmds(String[] cmds) throws Exception{
+    public void executeShellCmds(String[] cmds) throws IOException, InterruptedException{
         for (String cmd : cmds){
             shellStream.write(cmd + "\n");
         }

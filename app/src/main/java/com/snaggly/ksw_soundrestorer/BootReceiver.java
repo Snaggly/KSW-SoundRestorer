@@ -5,8 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.widget.Toast;
 
-import java.io.IOException;
-
 public class BootReceiver extends BroadcastReceiver {
 
     @Override

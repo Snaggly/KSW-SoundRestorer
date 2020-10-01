@@ -18,7 +18,7 @@ public class McuCommunicator {
     private McuAction handler;
     private LogcatReader readerThread;
     private byte[] frame;
-    private AtomicBoolean isReading = new AtomicBoolean();
+    private final AtomicBoolean isReading = new AtomicBoolean();
 
     private McuCommunicator() {
 
@@ -36,30 +36,35 @@ public class McuCommunicator {
             this.handler = handler;
             readerThread = new LogcatReader(handler);
             readerThread.startReading();
-            /*isReading.set(true);
-            AtomicReference<IOException> exception = new AtomicReference<>();
-            FileInputStream fis = new FileInputStream("/dev/ttyMSM1");
-            new Thread(() -> {
-                byte[] buffer = new byte[128];
-                try {
-                    while(isReading.get()){
-                        fis.read(buffer);
-                        int cmdType = fis.read();
-                        int length = fis.read();
-                        byte[] data = new byte[length];
-                        for (int i=0; i<length; i++){
-                            data[i] = (byte)fis.read();
-                        }
-                        if (fis.read() == checkSum(cmdType, data))
-                            handler.update(cmdType, data);
-                    }
-                }
-                catch (IOException innerE) {
-                    exception.set(innerE);
-                }
-            }).start();*/
         }
         return this;
+    }
+
+    private void startReadingFromIO() throws FileNotFoundException {
+        final AtomicReference<Exception> exception = new AtomicReference<>();
+        FileInputStream fis = new FileInputStream("/dev/ttyMSM1");
+        isReading.set(true);
+        new Thread(() -> {
+            byte[] buffer = new byte[128];
+            try {
+                while(isReading.get()){
+                    if ((fis.read() & 0xFF) != 0xf2)
+                        continue;
+                    fis.read();
+                    int cmdType = fis.read();
+                    int length = fis.read();
+                    byte[] data = new byte[length];
+                    for (int i=0; i<length; i++){
+                        data[i] = (byte)fis.read();
+                    }
+                    if (fis.read() == checkSum(cmdType, data))
+                        handler.update(cmdType, data);
+                }
+            }
+            catch (Exception innerE) {
+                exception.set(innerE);
+            }
+        }).start();
     }
 
     public McuCommunicator stopReading(){

@@ -15,8 +15,6 @@ import android.widget.Toast;
 import androidx.annotation.RequiresApi;
 import androidx.core.app.NotificationCompat;
 
-import java.io.IOException;
-
 public class ActivityService extends Service implements McuAction {
     public static boolean isRunning = false;
     private SoundManager sm;
