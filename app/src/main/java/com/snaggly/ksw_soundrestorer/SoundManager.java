@@ -45,6 +45,10 @@ public class SoundManager {
         inLoop = false;
     }
 
+    public void setMusicStreamToMax() {
+        am.setStreamVolume(AudioManager.STREAM_MUSIC, am.getStreamMaxVolume(AudioManager.STREAM_MUSIC), 0);
+    }
+
     class CheckIfMusicPlayingThread extends Thread{
         @Override
         public void run() {

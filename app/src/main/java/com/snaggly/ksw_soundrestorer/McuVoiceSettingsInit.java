@@ -2,6 +2,9 @@ package com.snaggly.ksw_soundrestorer;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.os.IBinder;
+import android.os.Parcel;
+import android.os.RemoteException;
 
 import java.lang.reflect.Method;
 
@@ -22,6 +25,46 @@ public class McuVoiceSettingsInit {
 
     private McuVoiceSettingsInit() throws ClassNotFoundException, NoSuchMethodException {}
 
+    @SuppressLint("PrivateApi")
+    private static IBinder getService(String serviceName) {
+        try {
+            Class<?> serviceManager = Class.forName("android.os.ServiceManager");
+            return (IBinder) serviceManager.getMethod("getService", new Class[]{String.class}).invoke(serviceManager, new Object[]{serviceName});
+        } catch (Exception e) {
+            return null;
+        }
+    }
+    public static int getSettingsInt(String key) throws RemoteException {
+        Parcel _data = Parcel.obtain();
+        Parcel _reply = Parcel.obtain();
+        try {
+            _data.writeInterfaceToken("com.wits.pms.IPowerManagerAppService");
+            _data.writeString(key);
+            getService("wits_pms").transact(10, _data, _reply, 0);
+            _reply.readException();
+            return _reply.readInt();
+        }
+        finally {
+            _reply.recycle();
+            _data.recycle();
+        }
+    }
+
+    public static void setSettingsInt(String key, int value) throws RemoteException {
+        Parcel _data = Parcel.obtain();
+        Parcel _reply = Parcel.obtain();
+        try {
+            _data.writeInterfaceToken("com.wits.pms.IPowerManagerAppService");
+            _data.writeString(key);
+            _data.writeInt(value);
+            getService("wits_pms").transact(12, _data, _reply, 0);
+            _reply.readException();
+        }
+        finally {
+            _reply.recycle();
+            _data.recycle();
+        }
+    }
 
     public static int getWitsCommand(String name) {
         try {

@@ -49,28 +49,19 @@ public class ActivityService extends Service implements McuAction {
 
         try {
             McuVoiceSettingsInit.reinitAllVol();
+
+            if ((McuCommunicator.getInstance()).startReading(this) != null)
+                isRunning = true;
+            McuCommunicator.getInstance().sendCommand(McuCommands.SET_TO_ATSL_AIRCONSOLE);
+
+            sm = new SoundManager(this);
+            sm.setMusicStreamToMax();
+            sm.startCheckingThread();
         }
         catch (Exception e) {
             e.printStackTrace();
         }
 
-        try{
-            if ((McuCommunicator.getInstance()).startReading(this) != null)
-                isRunning = true;
-            McuCommunicator.getInstance().sendCommand(McuCommands.SET_TO_ATSL_AIRCONSOLE);
-        }
-        catch (Exception e){
-            Toast.makeText(this, "Failed to set up Serial connection to MCU!", Toast.LENGTH_LONG).show();
-            stopSelf();
-        }
-
-        try {
-            sm = new SoundManager(this);
-            sm.startCheckingThread();
-        }
-        catch (Exception e){
-            Toast.makeText(this, "Failed to set up AudioManager!\nYou'll have to manually unpause music when switching.", Toast.LENGTH_LONG).show();
-        }
         Log.d(MainActivity.TAG, "Started Service...");
 
         super.onCreate();
