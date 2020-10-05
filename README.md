@@ -6,4 +6,5 @@ The idea is to have a service that restores the proper sound whenever needed. Th
 
 If the SelfADB proceedure fails, you'll have to acquire the permission either via root or manually over adb. Execute the following to grant permission:
 > adb pm grant com.snaggly.soundrestorer android.permission.READ_LOGS
+
 > adb settings put global hidden_api_policy 1
